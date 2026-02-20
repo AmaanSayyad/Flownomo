@@ -1,0 +1,567 @@
+/* Waitlist & Landing Page Layout */
+
+.landing-layout {
+    width: 100%;
+    position: relative;
+    background: #02040a;
+    min-height: 100vh;
+}
+
+/* Dynamic Navbar */
+.sticky-nav {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sticky-nav.at-top {
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 90px;
+    padding: 0 50px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    backdrop-filter: blur(0px);
+}
+
+.sticky-nav.scrolled {
+    top: 24px;
+    width: 95%;
+    max-width: 1200px;
+    height: 70px;
+    padding: 0 32px;
+    background: rgba(10, 10, 15, 0.7);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+/* Sections */
+section {
+    position: relative;
+    width: 100%;
+    padding: 140px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.section-content {
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 40px;
+}
+
+.waitlist-form-container {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 50px;
+}
+
+.input-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 40px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    min-width: 160px;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.input-container.expanded {
+    min-width: 420px;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(168, 85, 247, 0.4);
+}
+
+.waitlist-input {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    padding: 12px 24px;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 260px;
+}
+
+.mini-submit {
+    height: 54px;
+    padding: 0 32px;
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 28px;
+    font-weight: 950;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Game Mechanics Section (2x2 Grid from Reference) */
+/* Game Mechanics Section (2x2 Grid from Reference) */
+.mechanics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.mechanic-card {
+    position: relative;
+    padding: 48px;
+    background: rgba(10, 10, 10, 0.6);
+    /* Darker background for contrast with glow */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Subtle border */
+    border-radius: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 400px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+.mechanic-card:hover {
+    background: rgba(20, 20, 20, 0.8);
+    border-color: rgba(255, 68, 68, 0.3);
+    /* Red border on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+.abstract-shape {
+    width: 100%;
+    max-width: 240px;
+    aspect-ratio: 1;
+    position: relative;
+    animation: floating-visual 8s ease-in-out infinite;
+}
+
+.abstract-inner {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transform: rotate(0deg);
+    /* Rotation handled in inline style if needed, or remove */
+}
+
+@keyframes floating-visual {
+
+    0%,
+    100% {
+        transform: rotate(45deg) translateY(0) scale(1);
+    }
+
+    50% {
+        transform: rotate(47deg) translateY(-25px) scale(1.05);
+    }
+}
+
+/* Testimonials Slider */
+.testimonials-slider-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 80px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.testimonial-track {
+    display: flex;
+    gap: 40px;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.testimonial-card-premium {
+    width: 960px;
+    flex-shrink: 0;
+    padding: 64px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 48px;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0.1;
+    filter: blur(8px);
+    transform: scale(0.9);
+}
+
+.testimonial-card-premium.active {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Massive Footer Branding */
+.huge-footer-logo {
+    font-size: clamp(5rem, 15vw, 15rem);
+    font-weight: 950;
+    letter-spacing: -0.06em;
+    line-height: 0.8;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 80px;
+    background: linear-gradient(180deg, #fff 40%, rgba(255, 255, 255, 0.05) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: var(--font-orbitron);
+}
+
+/* FAQ Section */
+.faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 100px;
+    width: 100%;
+    align-items: start;
+}
+
+.faq-title-area {
+    position: sticky;
+    top: 140px;
+}
+
+.faq-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 32px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover .faq-question {
+    color: #fff;
+    transform: translateX(10px);
+}
+
+.faq-question-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq-question {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq-item.active .faq-question {
+    color: #fff;
+}
+
+.faq-icon {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+    color: #fff;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    margin-top: 24px;
+    opacity: 1;
+}
+
+.faq-answer-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    max-width: 90%;
+}
+
+@media (max-width: 1024px) {
+    .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 60px;
+    }
+
+    .faq-title-area {
+        position: static;
+    }
+}
+
+.footer-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-meta-item {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.footer-link-group {
+    display: flex;
+    gap: 32px;
+}
+
+.footer-link-group a {
+    color: rgba(255, 255, 255, 0.2);
+    transition: color 0.3s ease;
+}
+
+.footer-link-group a:hover {
+    color: #fff;
+}
+
+/* CTA Section - REFINED SCALE */
+.cta-section {
+    padding: 80px 40px;
+    background: #02040a;
+}
+
+.cta-card {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 60px;
+    background: #000;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 60px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 1);
+    z-index: 20;
+}
+
+.cta-glow {
+    position: absolute;
+    bottom: -60%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle at center,
+            rgba(255, 180, 0, 0.15) 0%,
+            rgba(255, 60, 0, 0.08) 30%,
+            transparent 70%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.cta-title {
+    font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 50px;
+    max-width: 800px;
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.cta-button {
+    background: #fff;
+    color: #000;
+    padding: 18px 40px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 950;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    z-index: 2;
+    border: none;
+}
+
+.cta-button:hover {
+    transform: scale(1.05) translateY(-3px);
+    background: #fdfdfd;
+    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15);
+}
+
+@media (max-width: 768px) {
+    .sticky-nav.at-top {
+        padding: 0 20px;
+        height: 70px;
+    }
+
+    .sticky-nav.scrolled {
+        width: 90%;
+        padding: 0 20px;
+        top: 12px;
+    }
+
+    section {
+        padding: 80px 0;
+    }
+
+    .section-content {
+        padding: 0 24px;
+    }
+
+    /* Hero Section */
+    #hero-top {
+        padding-top: 140px;
+        min-height: auto;
+    }
+
+    #hero-top p {
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        padding: 0 10px;
+    }
+
+    .waitlist-form-container {
+        margin-top: 30px;
+        max-width: 100%;
+    }
+
+    .input-container.expanded {
+        min-width: 100%;
+        flex-direction: column;
+        gap: 12px;
+        border-radius: 20px;
+        padding: 12px;
+    }
+
+    .waitlist-input {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .mini-submit {
+        width: 100%;
+        height: 50px;
+        margin-left: 0 !important;
+    }
+
+    /* Mechanics Grid */
+    .mechanics-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .mechanic-card {
+        padding: 30px;
+        flex-direction: column;
+        min-height: auto;
+        gap: 40px;
+    }
+
+    .mechanic-info {
+        max-width: 100%;
+    }
+
+    .mechanic-title {
+        font-size: 2.2rem;
+    }
+
+    .mechanic-visual {
+        width: 100%;
+    }
+
+    .abstract-shape {
+        max-width: 140px;
+    }
+
+    /* Testimonials */
+    .testimonial-card-premium {
+        width: calc(100vw - 48px);
+        padding: 32px;
+        border-radius: 24px;
+    }
+
+    .testimonial-card-premium p {
+        font-size: 1.1rem;
+    }
+
+    /* FAQ */
+    .faq-grid {
+        gap: 40px;
+    }
+
+    .faq-title-area h2 {
+        font-size: 3rem;
+    }
+
+    .faq-question {
+        font-size: 1.1rem;
+    }
+
+    /* CTA Card */
+    .cta-card {
+        padding: 60px 24px;
+        border-radius: 32px;
+    }
+
+    .cta-title {
+        font-size: 2rem;
+    }
+
+    /* Footer */
+    footer {
+        padding: 60px 20px !important;
+    }
+
+    .footer-meta {
+        flex-direction: column;
+        gap: 30px;
+        text-align: center;
+    }
+
+    .footer-link-group {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+}
