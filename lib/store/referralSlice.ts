@@ -65,7 +65,7 @@ export const createReferralSlice: StateCreator<ReferralState> = (set, get) => ({
 
         const shortAddr = address.slice(-4).toUpperCase();
         const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
-        const code = `bynomo-${shortAddr}${randomStr}`;
+        const code = `flownomo-${shortAddr}${randomStr}`;
 
         const referredByCode = get().referredBy;
         let referredByAddress = null;

@@ -5,7 +5,6 @@ import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { useOverflowStore } from '@/lib/store';
 import { useToast } from '@/lib/hooks/useToast';
-import { usePrivy } from '@privy-io/react-auth';
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -27,9 +26,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
   const { address, withdrawFunds, houseBalance, network, refreshWalletBalance, isConnected } = useOverflowStore();
   const toast = useToast();
 
-  const selectedCurrency = useOverflowStore(state => state.selectedCurrency);
-  const currencySymbol = network === 'SUI' ? 'USDC' : network === 'SOL' ? (selectedCurrency || 'SOL') : network === 'XLM' ? 'XLM' : network === 'XTZ' ? 'XTZ' : network === 'NEAR' ? 'NEAR' : 'BNB';
-  const networkName = network === 'SUI' ? 'Sui Network' : network === 'SOL' ? 'Solana' : network === 'XLM' ? 'Stellar' : network === 'XTZ' ? 'Tezos' : network === 'NEAR' ? 'NEAR Protocol' : 'BNB Chain';
+  const currencySymbol = 'FLOW';
+  const networkName = 'Flow Network';
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -93,21 +91,39 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
       setError(null);
 
       const withdrawAmount = parseFloat(amount);
-      toast.info('Processing withdrawal...');
+      let txHash = '';
+
+      const fcl = await import("@onflow/fcl");
+      const { withdrawTransaction } = await import("@/lib/flow/transactions");
+
+      toast.info('Please confirm the withdrawal in your Flow wallet...');
+
+      const transactionId = await fcl.mutate({
+        cadence: withdrawTransaction(),
+        args: (arg: any, t: any) => [
+          arg(withdrawAmount.toFixed(8), t.UFix64)
+        ],
+        limit: 1000
+      });
+
+      txHash = transactionId;
+      toast.info('Withdrawal transaction submitted. Processing...');
 
       // Call the withdrawal store action (which calls the backend)
       const result = await withdrawFunds(address, withdrawAmount);
 
+      if (!txHash) txHash = result.txHash;
+
       // Refresh balances
       refreshWalletBalance();
 
-      console.log('Withdrawal successful:', result.txHash);
+      console.log('Withdrawal successful:', txHash);
 
       toast.success(
         `Successfully withdrew ${withdrawAmount.toFixed(4)} ${currencySymbol}! Balance updated.`
       );
 
-      if (onSuccess) onSuccess(withdrawAmount, result.txHash);
+      if (onSuccess) onSuccess(withdrawAmount, txHash);
       onClose();
     } catch (err: any) {
       console.error('Withdrawal error:', err);
@@ -136,12 +152,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
             Available to Withdraw
           </p>
           <p className="text-[#FF006E] text-xl font-bold font-mono flex items-center gap-2">
-            {network === 'SUI' && <img src="/usd-coin-usdc-logo.png" alt="USDC" className="w-5 h-5" />}
-            {network === 'XTZ' && <img src="/logos/tezos-xtz-logo.png" alt="XTZ" className="w-5 h-5" />}
-            {network === 'BNB' && <img src="/logos/bnb-bnb-logo.png" alt="BNB" className="w-5 h-5" />}
-            {currencySymbol === 'BYNOMO' ? <img src="/overflowlogo.png" alt="BYNOMO" className="w-5 h-5" /> : (network === 'SOL' && <img src="/logos/solana-sol-logo.png" alt="SOL" className="w-5 h-5" />)}
-            {network === 'XLM' && <img src="/logos/stellar-xlm-logo.png" alt="XLM" className="w-5 h-5" />}
-            {network === 'NEAR' && <img src="/logos/near-logo.svg" alt="NEAR" className="w-5 h-5" />}
+            <img src="/flow-flow-logo.png" alt="FLOW" className="w-5 h-5" />
             {houseBalance.toFixed(4)} {currencySymbol}
           </p>
         </div>

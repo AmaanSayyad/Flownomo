@@ -129,7 +129,7 @@ export function HeaderMenu() {
 
                         <div className="px-6 py-4 bg-white/2 border-t border-white/5 flex items-center justify-between">
                             <span className="text-[7px] text-white/20 font-black uppercase tracking-[0.3em]">
-                                BYNOMO v2.4
+                                FLOWNOMO v1.0
                             </span>
                             <div className="flex gap-1">
                                 <div className="w-1 h-1 bg-white/10 rounded-full" />

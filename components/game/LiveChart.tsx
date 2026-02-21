@@ -82,15 +82,7 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
   const network = useStore((state) => state.network);
 
   const currencySymbol = useMemo(() => {
-    switch (network) {
-      case 'XTZ': return 'XTZ';
-      case 'NEAR': return 'NEAR';
-      case 'SOL': {
-        const state = useStore.getState() as any;
-        return state.selectedCurrency || 'SOL';
-      }
-      default: return 'BNB';
-    }
+    return network === 'FLOW' ? 'FLOW' : 'DEMO';
   }, [network]);
 
 
@@ -175,7 +167,6 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
 
   // Asset display configuration
   const assetConfig: Record<AssetType, { name: string; symbol: string; pair: string; decimals: number; logo: string; category: 'Crypto' | 'Metals' | 'Forex' | 'Stocks' }> = {
-    BYNOMO: { name: 'Bynomo Token', symbol: 'BYNOMO', pair: 'BYNOMO/USD', decimals: 6, logo: '/overflowlogo.png', category: 'Crypto' },
     BTC: { name: 'Bitcoin', symbol: 'BTC', pair: 'BTC/USD', decimals: 2, logo: '/logos/bitcoin-btc-logo.png', category: 'Crypto' },
     ETH: { name: 'Ethereum', symbol: 'ETH', pair: 'ETH/USD', decimals: 2, logo: '/logos/ethereum-eth-logo.png', category: 'Crypto' },
     SOL: { name: 'Solana', symbol: 'SOL', pair: 'SOL/USD', decimals: 2, logo: '/logos/solana-sol-logo.png', category: 'Crypto' },
@@ -189,6 +180,7 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
     XLM: { name: 'Stellar', symbol: 'XLM', pair: 'XLM/USD', decimals: 5, logo: '/logos/stellar-xlm-logo.png', category: 'Crypto' },
     XTZ: { name: 'Tezos', symbol: 'XTZ', pair: 'XTZ/USD', decimals: 4, logo: '/logos/tezos-xtz-logo.png', category: 'Crypto' },
     NEAR: { name: 'NEAR Protocol', symbol: 'NEAR', pair: 'NEAR/USD', decimals: 4, logo: '/logos/near-logo.svg', category: 'Crypto' },
+    FLOW: { name: 'Flow', symbol: 'FLOW', pair: 'FLOW/USD', decimals: 4, logo: '/flow-flow-logo.png', category: 'Crypto' },
     // Metals
     GOLD: { name: 'Gold', symbol: 'GOLD', pair: 'GOLD/USD', decimals: 2, logo: '/logos/gold.jpg', category: 'Metals' },
     SILVER: { name: 'Silver', symbol: 'SILVER', pair: 'SILVER/USD', decimals: 3, logo: '/logos/silver.avif', category: 'Metals' },
@@ -998,7 +990,7 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
                 fontFamily="monospace"
                 className="font-bold opacity-80"
               >
-                {bet.direction} {bet.amount} {currencySymbol} {bet.strikePrice && `@ $${bet.strikePrice.toFixed(2)}`}
+                {bet.direction} {bet.amount} FLOW {bet.strikePrice && `@ $${bet.strikePrice.toFixed(2)}`}
               </text>
             </g>
           );
@@ -1114,6 +1106,19 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
                   stroke="#ffffff"
                   strokeWidth="2"
                 />
+
+                {/* Asset symbol label at chart tip */}
+                <text
+                  x={scales.tipX + 10}
+                  y={scales.yScale(currentPrice) + 4}
+                  fill="#00FF9D"
+                  fontSize="11"
+                  fontWeight="900"
+                  fontFamily="monospace"
+                  className="drop-shadow-[0_0_8px_rgba(0,255,157,0.8)]"
+                >
+                  {currentAssetConfig.symbol}/{currentAssetConfig.pair.split('/')[1]}
+                </text>
 
                 {/* Horizontal price line */}
                 <line
@@ -1517,7 +1522,7 @@ export const LiveChart: React.FC<LiveChartProps> = ({ betAmount, setBetAmount })
                       }
                     `}
                   >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden ${selectedAsset === asset ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden bg-white/5`}>
                       <AssetIcon
                         src={assetConfig[asset].logo}
                         asset={asset}

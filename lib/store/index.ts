@@ -1,9 +1,8 @@
 /**
- * Main Zustand store for BYNOMO dApp
+ * Main Zustand store for Flownomo dApp
  * Combines wallet, game, and history slices
  * 
- * Note: After BNB migration, blockchain events are handled
- * by the BNB backend client for deposit/withdrawal confirmation.
+ * Note: Blockchain events are handled by Flow FCL.
  * Game logic remains off-chain.
  */
 
@@ -64,7 +63,7 @@ export const initializeStore = async (): Promise<void> => {
     };
 
 
-    console.log("BYNOMO store initialized successfully");
+    console.log("Flownomo store initialized successfully");
   } catch (error) {
     console.error("Error initializing store:", error);
   }

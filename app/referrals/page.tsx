@@ -34,7 +34,7 @@ export default function ReferralPage() {
 
     useEffect(() => {
         if (referralCode && typeof window !== 'undefined') {
-            setReferralLink(`https://bynomo.fun/?ref=${referralCode}`);
+            setReferralLink(`https://flownomo.fun/?ref=${referralCode}`);
         }
     }, [referralCode]);
 
@@ -49,7 +49,7 @@ export default function ReferralPage() {
     };
 
     const shareOnX = () => {
-        const text = encodeURIComponent(`Trade with millisecond precision on @BYNOMOProtocol! 🚀\n\nJoin using my referral link and earn rewards:`);
+        const text = encodeURIComponent(`Trade with millisecond precision on @FlownomoProtocol! 🚀\n\nJoin using my referral link and earn rewards:`);
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(referralLink)}`, '_blank');
     };
 
@@ -86,7 +86,7 @@ export default function ReferralPage() {
                                 Network <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 text-glow-purple">Referrals</span>
                             </h1>
                             <p className="text-white/30 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-xl">
-                                Expand the BYNOMO neural network. Earn 10% from every trade made by your referred nodes.
+                                Expand the Flownomo neural network. Earn 10% from every trade made by your referred nodes.
                             </p>
                         </div>
                     </motion.div>
@@ -124,7 +124,7 @@ export default function ReferralPage() {
                                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20">Referral Link</p>
                                             <div className="flex items-center gap-4">
                                                 <div className="flex-1 truncate text-xs font-mono text-white/40 bg-white/[0.02] border border-white/5 rounded-2xl px-6 py-4">
-                                                    {referralLink || 'BYNOMO.FUN/?REF=---'}
+                                                    {referralLink || 'FLOWNOMO.FUN/?REF=---'}
                                                 </div>
                                                 <button
                                                     onClick={() => copyToClipboard(referralLink, 'Link')}

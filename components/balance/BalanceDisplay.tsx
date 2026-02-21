@@ -111,14 +111,12 @@ export const BalanceDisplay: React.FC = () => {
   const formattedBalance = activeBalance.toFixed(4);
 
   // Current symbol for display
-  const currentSymbol = network === 'SUI' ? 'USDC'
-    : (network === 'SOL' ? (selectedCurrency || 'SOL') : network === 'XLM'
-      ? 'XLM' : network === 'XTZ' ? 'XTZ' : network === 'NEAR' ? 'NEAR' : 'BNB');
+  const currentSymbol = network === 'FLOW' ? 'FLOW' : 'DEMO';
 
   return (
     <>
       <div className="bg-black/30 rounded-xl border border-white/5 overflow-hidden">
-        {/* Secret Demo Header - Only visible when activated via BYNOMO logo click */}
+        {/* Secret Demo Header */}
         {accountType === 'demo' && (
           <div className="flex bg-yellow-500/10 p-1 border-b border-yellow-500/20 items-center justify-between px-3">
             <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">
@@ -136,48 +134,18 @@ export const BalanceDisplay: React.FC = () => {
         <div className="p-3 space-y-2">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h3 className={`text-xs font-bold font-mono uppercase tracking-wider ${accountType === 'demo' ? 'text-yellow-400' : 'text-purple-400'
+            <h3 className={`text-xs font-bold font-mono uppercase tracking-wider ${accountType === 'demo' ? 'text-yellow-400' : 'text-cyan-400'
               }`}>
               {accountType === 'demo' ? 'Practice Balance' : 'House Balance'}
             </h3>
 
             <div className="flex items-center gap-2">
-              {/* Solana Currency Toggle */}
-              {network === 'SOL' && accountType === 'real' && (
-                <div className="flex bg-white/5 rounded-lg p-0.5 border border-white/10">
-                  <button
-                    onClick={() => {
-                      setSelectedCurrency('SOL');
-                      setTimeout(() => fetchBalance(address!), 100);
-                    }}
-                    className={`px-2 py-0.5 rounded text-[8px] font-black uppercase transition-all ${(!selectedCurrency || selectedCurrency === 'SOL')
-                      ? 'bg-purple-500 text-white shadow-lg'
-                      : 'text-white/40 hover:text-white/60'
-                      }`}
-                  >
-                    SOL
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedCurrency('BYNOMO');
-                      setTimeout(() => fetchBalance(address!), 100);
-                    }}
-                    className={`px-2 py-0.5 rounded text-[8px] font-black uppercase transition-all ${selectedCurrency === 'BYNOMO'
-                      ? 'bg-purple-500 text-white shadow-lg'
-                      : 'text-white/40 hover:text-white/60'
-                      }`}
-                  >
-                    BYNOMO
-                  </button>
-                </div>
-              )}
-
               {/* Refresh Button */}
               {accountType === 'real' && (
                 <button
                   onClick={handleRefresh}
                   disabled={!address || isLoading || isRefreshing}
-                  className="text-purple-400 hover:text-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="text-cyan-400 hover:text-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   title="Refresh balance"
                 >
                   <svg
@@ -201,7 +169,7 @@ export const BalanceDisplay: React.FC = () => {
           {/* Balance Display */}
           <div className={`bg-gradient-to-br rounded-lg p-2.5 border ${accountType === 'demo'
             ? 'from-yellow-500/10 to-transparent border-yellow-500/30'
-            : 'from-purple-600/10 to-transparent border-purple-600/30'
+            : 'from-cyan-600/10 to-transparent border-cyan-600/30'
             }`}>
             <p className="text-gray-400 text-[10px] uppercase tracking-wider mb-0.5 font-mono">
               Available Credits
@@ -216,23 +184,15 @@ export const BalanceDisplay: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1">
                   <img
-                    src={
-                      currentSymbol === 'BYNOMO' ? '/overflowlogo.png' :
-                        network === 'SUI' ? '/logos/sui-logo.png' :
-                          network === 'SOL' ? '/logos/solana-sol-logo.png' :
-                            network === 'XLM' ? '/logos/stellar-xlm-logo.png' :
-                              network === 'XTZ' ? '/logos/tezos-xtz-logo.png' :
-                                network === 'NEAR' ? '/logos/near-logo.svg' :
-                                  '/logos/bnb-bnb-logo.png'
-                    }
+                    src="/flow-flow-logo.png"
                     alt={currentSymbol}
                     className="w-4 h-4 object-contain"
                   />
-                  <p className={`text-xl font-bold font-mono ${accountType === 'demo' ? 'text-yellow-400' : 'text-purple-400'}`}>
+                  <p className={`text-xl font-bold font-mono ${accountType === 'demo' ? 'text-yellow-400' : 'text-cyan-400'}`}>
                     {formattedBalance}
                   </p>
                 </div>
-                <span className={`text-sm font-mono ${accountType === 'demo' ? 'text-yellow-400/70' : 'text-purple-400/70'}`}>
+                <span className={`text-sm font-mono ${accountType === 'demo' ? 'text-yellow-400/70' : 'text-cyan-400/70'}`}>
                   {currentSymbol}
                 </span>
               </div>

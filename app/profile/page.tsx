@@ -87,13 +87,13 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (username) {
-            setNewUsername(username.replace('.bynomo', ''));
+            setNewUsername(username.replace('.flownomo', ''));
         }
     }, [username]);
 
     const handleUpdateUsername = async () => {
         if (!address || !newUsername) return;
-        const formattedUsername = `${newUsername.toLowerCase()}.bynomo`;
+        const formattedUsername = `${newUsername.toLowerCase()}.flownomo`;
         const success = await updateUsername(address, formattedUsername);
         if (success) {
             setIsEditing(false);
@@ -118,7 +118,7 @@ export default function ProfilePage() {
                 <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-8">
                     <Wallet className="w-8 h-8 text-white/40" />
                 </div>
-                <h1 className="text-2xl font-black text-white uppercase tracking-widest mb-4">BYNOMO Registry</h1>
+                <h1 className="text-2xl font-black text-white uppercase tracking-widest mb-4">Flownomo Registry</h1>
                 <p className="text-gray-500 max-w-xs mx-auto text-[10px] font-bold uppercase tracking-[0.2em] leading-relaxed mb-8">
                     Synchronization required. Please authorize your wallet to access neural trading identity.
                 </p>
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                                             {copySuccess === 'Code' ? <Check className="w-4 h-4 text-emerald-400" /> : <LinkIcon className="w-4 h-4" />}
                                         </button>
                                     </div>
-                                    <button onClick={() => window.open(`https://twitter.com/intent/tweet?text=Join BYNOMO: ${referralCode}`, '_blank')} className="w-full py-4 bg-white text-black rounded-xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
+                                    <button onClick={() => window.open(`https://twitter.com/intent/tweet?text=Join Flownomo: ${referralCode}`, '_blank')} className="w-full py-4 bg-white text-black rounded-xl text-[9px] font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
                                         Share Access
                                     </button>
                                 </div>

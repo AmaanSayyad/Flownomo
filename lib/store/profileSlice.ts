@@ -14,8 +14,8 @@ export interface ProfileState {
 }
 
 export const createProfileSlice: StateCreator<ProfileState> = (set, get) => ({
-    username: (typeof window !== 'undefined' && localStorage.getItem('bynomo_username')) || null,
-    accessCode: (typeof window !== 'undefined' && localStorage.getItem('bynomo_access_code')) || null,
+    username: (typeof window !== 'undefined' && localStorage.getItem('flownomo_username')) || null,
+    accessCode: (typeof window !== 'undefined' && localStorage.getItem('flownomo_access_code')) || null,
     isUpdatingUsername: false,
     recentTrades: [],
     isLoadingTrades: false,
@@ -35,8 +35,8 @@ export const createProfileSlice: StateCreator<ProfileState> = (set, get) => ({
                     accessCode: data.access_code
                 });
                 if (typeof window !== 'undefined') {
-                    if (data.username) localStorage.setItem('bynomo_username', data.username);
-                    if (data.access_code) localStorage.setItem('bynomo_access_code', data.access_code);
+                    if (data.username) localStorage.setItem('flownomo_username', data.username);
+                    if (data.access_code) localStorage.setItem('flownomo_access_code', data.access_code);
                 }
             }
         } catch (error) {

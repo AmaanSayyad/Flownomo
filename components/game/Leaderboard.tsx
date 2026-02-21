@@ -22,33 +22,17 @@ export const Leaderboard: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const getNetworkIcon = (network: string) => {
-        switch (network) {
-            case 'SOL': return '/logos/solana-sol-logo.png';
-            case 'SUI': return '/logos/sui-logo.png';
-            case 'BNB': return '/logos/bnb-bnb-logo.png';
-            case 'XLM': return '/logos/stellar-xlm-logo.png';
-            case 'XTZ': return '/logos/tezos-xtz-logo.png';
-            case 'NEAR': return '/logos/near-logo.svg';
-            default: return '/logos/bnb-bnb-logo.png';
-        }
+        return '/flow-flow-logo.png'; // Only Flow logo for this version
     };
 
     const getCurrencySymbol = (network: string) => {
-        switch (network) {
-            case 'SOL': return 'SOL';
-            case 'SUI': return 'USDC';
-            case 'BNB': return 'BNB';
-            case 'XLM': return 'XLM';
-            case 'XTZ': return 'XTZ';
-            case 'NEAR': return 'NEAR';
-            default: return 'BNB';
-        }
+        return 'FLOW'; // Only Flow for this version
     };
 
     const fetchLeaderboard = useCallback(async () => {
         setIsLoading(true);
         try {
-            const res = await fetch('/api/bets/leaderboard?limit=10');
+            const res = await fetch('/api/bets/leaderboard?limit=10&currency=FLOW');
             if (res.ok) {
                 const data = await res.json();
                 setLeaderboard(data.leaderboard || []);

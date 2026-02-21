@@ -45,29 +45,9 @@ export default function LeaderboardPage() {
         return () => clearInterval(interval);
     }, [fetchLeaderboard]);
 
-    const getNetworkIcon = (network: string) => {
-        switch (network) {
-            case 'SOL': return '/logos/solana-sol-logo.png';
-            case 'SUI': return '/logos/sui-logo.png';
-            case 'BNB': return '/logos/bnb-bnb-logo.png';
-            case 'XLM': return '/logos/stellar-xlm-logo.png';
-            case 'XTZ': return '/logos/tezos-xtz-logo.png';
-            case 'NEAR': return '/logos/near-logo.svg';
-            default: return '/logos/bnb-bnb-logo.png';
-        }
-    };
-
-    const getCurrencySymbol = (network: string) => {
-        switch (network) {
-            case 'SOL': return 'SOL';
-            case 'SUI': return 'USDC';
-            case 'BNB': return 'BNB';
-            case 'XLM': return 'XLM';
-            case 'XTZ': return 'XTZ';
-            case 'NEAR': return 'NEAR';
-            default: return 'BNB';
-        }
-    };
+    // All entries on Flownomo use Flow network
+    const getNetworkIcon = (_network: string) => '/flow-flow-logo.png';
+    const getCurrencySymbol = (_network: string) => 'FLOW';
 
     const shortenAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -113,7 +93,7 @@ export default function LeaderboardPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="text-white/30 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-xl">
-                            The elite traders of the BYNOMO protocol. Ranked by net profit across all supported networks.
+                            The elite traders of the Flownomo protocol. Ranked by net profit on the Flow network.
                         </motion.p>
                     </div>
 

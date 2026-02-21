@@ -14,11 +14,11 @@ export const config = createConfig(
         walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'dummy-id',
 
         // Required App Info
-        appName: 'BYNOMO',
+        appName: 'Flownomo',
 
         // Optional App Info
-        appDescription: 'BYNOMO on BNB Smart Chain',
-        appUrl: 'https://family.co', // your app's url
-        appIcon: 'https://family.co/logo.png', // your app's icon
+        appDescription: 'Flownomo on Flow Network',
+        appUrl: 'https://flownomo.fun',
+        appIcon: 'https://flownomo.fun/logo.png',
     }),
 );

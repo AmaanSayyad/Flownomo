@@ -67,7 +67,7 @@ export function Header() {
                         className="text-xl sm:text-2xl font-black tracking-tighter sm:tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-white cursor-pointer select-none"
                         style={{ fontFamily: 'var(--font-orbitron)' }}
                     >
-                        BYNOMO
+                        FLOWNOMO
                     </motion.span>
                 </Link>
                 {demoActivated && (
@@ -78,7 +78,7 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-                {pathname !== '/' && accessCode !== null && (
+                {pathname !== '/' && (
                     <button
                         onClick={activateDemoMode}
                         className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 rounded-full transition-all group"

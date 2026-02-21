@@ -4,16 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '@/lib/store';
 import { LiveChart } from './';
 import { BalanceDisplay } from '@/components/balance';
-import { startPriceFeed } from '@/lib/store/gameSlice';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react';
-import { getBNBConfig } from '@/lib/bnb/config';
-import { getAddress } from 'viem';
-import { ethers } from 'ethers';
+import * as fcl from '@onflow/fcl';
 import { useToast } from '@/lib/hooks/useToast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Key, ShieldCheck, Loader2, Wallet } from 'lucide-react';
-import { useSignAndExecuteTransaction, useCurrentAccount } from '@mysten/dapp-kit';
+import { Wallet } from 'lucide-react';
 
 
 export const GameBoard: React.FC = () => {
@@ -50,10 +44,6 @@ export const GameBoard: React.FC = () => {
     setSelectedCurrency
   } = useStore();
 
-  const { wallets } = useWallets();
-  const { } = usePrivy();
-  const { sendTransaction: sendSolanaTransaction } = useSolanaWallet();
-
   const [betAmount, setBetAmount] = useState<string>('0.1');
   const [selectedDuration, setSelectedDuration] = useState<number>(30);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
@@ -61,21 +51,15 @@ export const GameBoard: React.FC = () => {
   const [blitzCountdown, setBlitzCountdown] = useState<string>('');
   const [blitzTimeRemaining, setBlitzTimeRemaining] = useState<string>('');
   const [isActivatingBlitz, setIsActivatingBlitz] = useState(false);
-  const { mutateAsync: signAndExecuteSui } = useSignAndExecuteTransaction();
-  const suiAccount = useCurrentAccount();
 
   const toast = useToast();
-  const [accessInput, setAccessInput] = useState('');
-  const [isValidating, setIsValidating] = useState(false);
-  const [accessError, setAccessError] = useState<string | null>(null);
 
   // Unified balance and currency
-  const currencySymbol = network === 'SOL' ? (selectedCurrency || 'SOL') : network === 'SUI' ? 'USDC' : network === 'XLM' ? 'XLM' : network === 'XTZ' ? 'XTZ' : network === 'NEAR' ? 'NEAR' : 'BNB';
+  const currencySymbol = network === 'FLOW' ? 'FLOW' : 'DEMO';
   const blitzEntryFee = 0.01;
 
-  // Connection and Authorization status
+  // Connection status
   const isWalletConnected = !!address;
-  const isUnauthorized = isWalletConnected && accessCode === null;
 
   const handleEnterBlitz = async () => {
     if (!isWalletConnected || !address) {
@@ -91,101 +75,36 @@ export const GameBoard: React.FC = () => {
     try {
       setIsActivatingBlitz(true);
 
-      if (network === 'SOL') {
-        const { getSolanaConnection, buildDepositTransaction } = await import('@/lib/solana/client');
-        const connection = getSolanaConnection();
-        const transaction = await buildDepositTransaction(blitzEntryFee, address);
-
-        toast.info(`Confirming ${blitzEntryFee} SOL Blitz Entry...`);
-        const signature = await sendSolanaTransaction(transaction, connection);
-        console.log("Solana Blitz payment sig:", signature);
-      } else if (network === 'BNB') {
-        const wallet = wallets.find(w => w.address.toLowerCase() === address.toLowerCase());
-        if (!wallet) {
-          throw new Error("Active wallet not found in session. Please reconnect.");
-        }
-
-        const ethereumProvider = await wallet.getEthereumProvider();
-        const provider = new ethers.BrowserProvider(ethereumProvider);
-        const signer = await provider.getSigner();
-
-        const config = getBNBConfig();
-        if (!config.treasuryAddress) {
-          throw new Error("Treasury not configured");
-        }
-
-        toast.info(`Confirming ${blitzEntryFee} BNB Blitz Entry...`);
-        const txResponse = await signer.sendTransaction({
-          to: getAddress(config.treasuryAddress),
-          value: ethers.parseEther(blitzEntryFee.toString()),
-        });
-        console.log("BNB Blitz payment tx:", txResponse.hash);
-      } else if (network === 'SUI') {
-        if (!suiAccount) throw new Error('Sui wallet not connected');
-        const { buildDepositTransaction } = await import('@/lib/sui/client');
-        const tx = await buildDepositTransaction(blitzEntryFee, address);
-        toast.info(`Confirming ${blitzEntryFee} USDC Blitz Entry on Sui...`);
-        const result = await signAndExecuteSui({ transaction: tx as any });
-        console.log("Sui Blitz payment digest:", result.digest);
-      } else if (network === 'XTZ') {
-        const { BeaconWallet } = await import('@taquito/beacon-wallet');
-        const { NetworkType } = await import('@airgap/beacon-types');
-        const { getTezosClient } = await import('@/lib/tezos/client');
-
-        const rpcUrl = process.env.NEXT_PUBLIC_TEZOS_RPC_URL || 'https://rpc.tzkt.io/mainnet';
-        const wallet = new BeaconWallet({
-          name: "BYNOMO",
-          preferredNode: rpcUrl,
-          network: { type: NetworkType.MAINNET, rpcUrl }
-        } as any);
-
-        await wallet.requestPermissions();
-        const tezos = await getTezosClient();
-        tezos.setWalletProvider(wallet);
-
-        const treasuryAddress = process.env.NEXT_PUBLIC_TEZOS_TREASURY_ADDRESS;
-        if (!treasuryAddress) throw new Error('Tezos treasury not configured');
-
-        toast.info(`Confirming ${blitzEntryFee} XTZ Blitz Entry...`);
-        const op = await tezos.wallet.transfer({ to: treasuryAddress, amount: blitzEntryFee }).send();
-        console.log("Tezos Blitz payment hash:", op.opHash);
-      } else if (network === 'XLM') {
-        const { StellarWalletsKit, WalletNetwork, allowAllModules } = await import('@creit.tech/stellar-wallets-kit');
-        const { TransactionBuilder, Networks, Operation, Asset, Horizon } = await import('@stellar/stellar-sdk');
-
-        const treasuryAddress = process.env.NEXT_PUBLIC_STELLAR_TREASURY_ADDRESS;
-        if (!treasuryAddress) throw new Error('Stellar treasury not configured');
-
-        const server = new Horizon.Server(process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL || 'https://horizon.stellar.org');
-        const account = await server.loadAccount(address);
-
-        const transaction = new TransactionBuilder(account, {
-          fee: '100',
-          networkPassphrase: Networks.PUBLIC,
-        })
-          .addOperation(Operation.payment({
-            destination: treasuryAddress,
-            asset: Asset.native(),
-            amount: blitzEntryFee.toFixed(7),
-          }))
-          .setTimeout(30)
-          .build();
-
-        const kit = new StellarWalletsKit({
-          network: WalletNetwork.PUBLIC,
-          modules: allowAllModules(),
-        });
-
-        toast.info(`Confirming ${blitzEntryFee} XLM Blitz Entry...`);
-        const { signedTxXdr } = await kit.signTransaction(transaction.toXDR());
-        const result = await server.submitTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC));
-        console.log("Stellar Blitz payment hash:", (result as any).hash);
-      } else if (network === 'NEAR') {
-        const { depositNEAR } = await import('@/lib/near/wallet');
-        toast.info(`Confirming ${blitzEntryFee} NEAR Blitz Entry...`);
-        const txHash = await depositNEAR(blitzEntryFee.toString());
-        console.log("NEAR Blitz payment hash:", txHash);
-      }
+      // Flow-only: use FCL to send blitz entry fee
+      toast.info(`Confirming ${blitzEntryFee} FLOW Blitz Entry...`);
+      const txId = await fcl.mutate({
+        cadence: `
+          import FlowToken from 0xFlowToken
+          import FungibleToken from 0xFungibleToken
+          transaction(amount: UFix64, treasury: Address) {
+            let sentVault: @FlowToken.Vault
+            prepare(signer: auth(BorrowValue) &Account) {
+              let vaultRef = signer.storage.borrow<auth(FungibleToken.Withdraw) &FlowToken.Vault>(
+                from: /storage/flowTokenVault
+              ) ?? panic("Could not borrow Flow Token vault")
+              self.sentVault <- vaultRef.withdraw(amount: amount) as! @FlowToken.Vault
+            }
+            execute {
+              let receiverRef = getAccount(treasury).capabilities
+                .borrow<&{FungibleToken.Receiver}>(/public/flowTokenReceiver)
+                ?? panic("Could not borrow receiver reference")
+              receiverRef.deposit(from: <-self.sentVault)
+            }
+          }
+        `,
+        args: (arg: any, t: any) => [
+          arg(blitzEntryFee.toFixed(8), t.UFix64),
+          arg(process.env.NEXT_PUBLIC_FLOW_TREASURY_ADDRESS || '0x0', t.Address)
+        ],
+        limit: 999
+      });
+      await fcl.tx(txId).onceSealed();
+      console.log("Flow Blitz payment tx:", txId);
 
       toast.success("Payment successful! Blitz Mode enabled.");
       enableBlitzAccess();
@@ -203,35 +122,6 @@ export const GameBoard: React.FC = () => {
     }
   };
 
-  const handleValidateAccess = async () => {
-    if (!accessInput || isValidating || !address) return;
-    setIsValidating(true);
-    setAccessError(null);
-
-    try {
-      const res = await fetch('/api/validate-access-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          code: accessInput.trim().toUpperCase(),
-          walletAddress: address
-        })
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        await fetchProfile(address);
-        toast.success("Access authorized!");
-      } else {
-        setAccessError(data.error || 'Invalid code');
-      }
-    } catch (err) {
-      setAccessError('Neural connection failed');
-    } finally {
-      setIsValidating(false);
-    }
-  };
 
   // Update Blitz Timer every second
   useEffect(() => {
@@ -272,8 +162,8 @@ export const GameBoard: React.FC = () => {
     }
   };
 
-  const handleBynomoBet = async (direction: 'UP' | 'DOWN') => {
-    if (!address || !isWalletConnected || gameMode !== 'binomo' || isUnauthorized) return;
+  const handleFlownomoBet = async (direction: 'UP' | 'DOWN') => {
+    if (!address || !isWalletConnected || gameMode !== 'binomo') return;
 
     try {
       const multiplier = getMultiplier(selectedDuration);
@@ -439,41 +329,7 @@ export const GameBoard: React.FC = () => {
 
           {/* Content Area - Fixed Height */}
           <div className="p-4 min-h-[180px] relative flex flex-col">
-            {/* Overlay if not authorized */}
-            {isUnauthorized && (
-              <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-                <div className="w-full space-y-4 text-center animate-in fade-in zoom-in duration-300">
-                  <div className="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                    <Key className="w-6 h-6 text-purple-400" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-black uppercase tracking-[0.2em] text-[10px]">Access Restricted</h4>
-                  </div>
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      value={accessInput}
-                      onChange={(e) => setAccessInput(e.target.value.toUpperCase())}
-                      placeholder="ENTER CODE"
-                      disabled={isValidating}
-                      className="w-full bg-black/60 border border-white/10 rounded-xl px-3 py-3 text-center text-white font-mono text-base tracking-[0.2em] placeholder:tracking-normal placeholder:text-white/10 focus:outline-none focus:border-purple-500/50 transition-all"
-                    />
-                    <button
-                      onClick={handleValidateAccess}
-                      disabled={!accessInput || isValidating}
-                      className="w-full bg-white text-black font-black uppercase tracking-widest text-[10px] py-3 rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50"
-                    >
-                      {isValidating ? 'Validating...' : 'Unlock Node'}
-                    </button>
-                    {accessError && (
-                      <p className="text-red-500 text-[8px] font-black uppercase tracking-widest">{accessError}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className={`transition-all duration-700 h-full flex flex-col ${isUnauthorized ? 'blur-xl grayscale opacity-20 pointer-events-none select-none' : ''}`}>
+            <div className="transition-all duration-700 h-full flex flex-col">
               {activeTab === 'bet' ? (
                 <div className="space-y-4">
                   {/* Amount Presets */}
@@ -552,8 +408,8 @@ export const GameBoard: React.FC = () => {
                   {gameMode === 'binomo' ? (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <button
-                        onClick={() => handleBynomoBet('UP')}
-                        disabled={!isWalletConnected || isPlacingBet || isUnauthorized}
+                        onClick={() => handleFlownomoBet('UP')}
+                        disabled={!isWalletConnected || isPlacingBet}
                         className="group relative flex flex-col items-center justify-center gap-1 py-4 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-2xl transition-all duration-200 active:scale-95 disabled:opacity-50"
                       >
                         <div className="text-emerald-500 text-2xl font-bold group-hover:scale-110 transition-transform">▲</div>
@@ -561,8 +417,8 @@ export const GameBoard: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() => handleBynomoBet('DOWN')}
-                        disabled={!isWalletConnected || isPlacingBet || isUnauthorized}
+                        onClick={() => handleFlownomoBet('DOWN')}
+                        disabled={!isWalletConnected || isPlacingBet}
                         className="group relative flex flex-col items-center justify-center gap-1 py-4 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-2xl transition-all duration-200 active:scale-95 disabled:opacity-50"
                       >
                         <div className="text-rose-500 text-2xl font-bold group-hover:scale-110 transition-transform">▼</div>
@@ -638,22 +494,7 @@ export const GameBoard: React.FC = () => {
                       <div className="bg-gradient-to-br from-purple-500/10 to-transparent rounded-xl p-4 border border-purple-500/20">
                         <div className="flex justify-between items-start mb-1">
                           <p className="text-gray-400 text-[10px] uppercase tracking-widest">Wallet Balance</p>
-                          {network === 'SOL' && (
-                            <div className="flex gap-1 bg-black/40 p-0.5 rounded-lg border border-white/5">
-                              {['SOL', 'BYNOMO'].map(c => (
-                                <button
-                                  key={c}
-                                  onClick={() => setSelectedCurrency(c)}
-                                  className={`px-2 py-0.5 rounded-md text-[8px] font-black transition-all ${(selectedCurrency || 'SOL') === c
-                                    ? 'bg-purple-500 text-white shadow-lg'
-                                    : 'text-gray-500 hover:text-gray-300'
-                                    }`}
-                                >
-                                  {c}
-                                </button>
-                              ))}
-                            </div>
-                          )}
+                          {/* Currency selector removed — FLOW only */}
                         </div>
                         <div className="flex items-baseline gap-2">
                           <span className="text-2xl font-bold text-white">
@@ -714,7 +555,7 @@ export const GameBoard: React.FC = () => {
 
                       <button
                         onClick={handleEnterBlitz}
-                        disabled={!isWalletConnected || hasBlitzAccess || isActivatingBlitz || isUnauthorized}
+                        disabled={!isWalletConnected || hasBlitzAccess || isActivatingBlitz}
                         className={`w-full py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 transform active:scale-95 ${hasBlitzAccess
                           ? 'bg-emerald-500/20 border-2 border-emerald-500/40 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.1)] cursor-default'
                           : !isWalletConnected
@@ -757,10 +598,6 @@ export const GameBoard: React.FC = () => {
             {!isWalletConnected ? (
               <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest text-center">
                 Connect wallet to start trading
-              </p>
-            ) : isUnauthorized ? (
-              <p className="text-purple-500 text-[10px] font-black uppercase tracking-widest text-center animate-pulse">
-                Initialization Required
               </p>
             ) : (
               <div className="flex items-center justify-between">

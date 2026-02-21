@@ -3,7 +3,7 @@
  * Manages wallet connection status and address
  * 
  * Note: This slice is now primarily used for storing wallet state.
- * Actual wallet connection is handled by BNB Wallet integration in lib/bnb/wallet.ts
+ * Actual wallet connection is handled by Flow FCL integration.
  */
 
 import { StateCreator } from "zustand";
@@ -14,8 +14,8 @@ export interface WalletState {
   walletBalance: number;
   isConnected: boolean;
   isConnecting: boolean;
-  network: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null;
-  preferredNetwork: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null;
+  network: 'FLOW' | null;
+  preferredNetwork: 'FLOW' | null;
   selectedCurrency: string | null;
   error: string | null;
   isConnectModalOpen: boolean;
@@ -30,14 +30,14 @@ export interface WalletState {
   // Setters for wallet integration
   setAddress: (address: string | null) => void;
   setIsConnected: (connected: boolean) => void;
-  setNetwork: (network: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null) => void;
-  setPreferredNetwork: (network: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null) => void;
+  setNetwork: (network: 'FLOW' | null) => void;
+  setPreferredNetwork: (network: 'FLOW' | null) => void;
   setSelectedCurrency: (currency: string | null) => void;
 }
 
 /**
  * Create wallet slice for Zustand store
- * Handles wallet state management for multi-chain integration
+ * Handles wallet state management for Flow integration
  */
 export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
   // Initial state
@@ -46,14 +46,14 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
   isConnected: false,
   isConnecting: false,
   network: null,
-  preferredNetwork: typeof window !== 'undefined' ? localStorage.getItem('solnomo_preferred_network') as 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null : null,
+  preferredNetwork: typeof window !== 'undefined' ? localStorage.getItem('flownomo_preferred_network') as 'FLOW' | null : null,
   selectedCurrency: null,
   error: null,
   isConnectModalOpen: false,
 
   /**
    * Connect wallet
-   * Note: Actual connection is handled by Privy integration
+   * Note: Actual connection is handled by Flow FCL
    */
   connect: async () => {
     set({ isConnectModalOpen: true });
@@ -61,10 +61,10 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
 
   /**
    * Disconnect wallet
-   * Note: Actual disconnection is handled by Privy integration
+   * Note: Actual disconnection is handled by Flow FCL
    */
   disconnect: () => {
-    console.log('Disconnect called - handled by Privy');
+    console.log('Disconnect called');
     const state = get() as any;
     const accountType = state.accountType;
 
@@ -80,8 +80,6 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
     } as any);
 
     // Only clear profile data if we are NOT in demo mode AND don't have an access code
-    // When exiting demo mode, we want to keep the accessCode to show the "Demo Mode" button
-    // Also if the user just refreshed, we want to keep the accessCode if it exists
     const currentAccessCode = state.accessCode;
     if (accountType !== 'demo' && !currentAccessCode) {
       set({
@@ -99,44 +97,14 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
   refreshWalletBalance: async () => {
     const { address, isConnected, network } = get();
 
-    if (!isConnected || !address || !network) {
+    if (!isConnected || !address || network !== 'FLOW') {
       return;
     }
 
     try {
-      if (network === 'BNB') {
-        const { getBNBBalance } = await import('@/lib/bnb/client');
-        const bal = await getBNBBalance(address);
-        set({ walletBalance: bal });
-      } else if (network === 'SOL') {
-        const { getSOLBalance, getTokenBalance } = await import('@/lib/solana/client');
-        const currency = get().selectedCurrency || 'SOL';
-        let bal = 0;
-        if (currency === 'SOL') {
-          bal = await getSOLBalance(address);
-        } else if (currency === 'BYNOMO') {
-          // BYNOMO Token on Solana
-          const BYNOMO_MINT = 'Bi4NEEQhtrFdnoS9NjrXaWkQftXifh2t3RzQHSTQpump';
-          bal = await getTokenBalance(address, BYNOMO_MINT);
-        }
-        set({ walletBalance: bal });
-      } else if (network === 'SUI') {
-        const { getUSDCBalance } = await import('@/lib/sui/client');
-        const bal = await getUSDCBalance(address);
-        set({ walletBalance: bal });
-      } else if (network === 'XLM') {
-        const { getXLMBalance } = await import('@/lib/stellar/client');
-        const bal = await getXLMBalance(address);
-        set({ walletBalance: bal });
-      } else if (network === 'XTZ') {
-        const { getXTZBalance } = await import('@/lib/tezos/client');
-        const bal = await getXTZBalance(address);
-        set({ walletBalance: bal });
-      } else if (network === 'NEAR') {
-        const { getNearBalance } = await import('@/lib/near/wallet');
-        const bal = await getNearBalance(address);
-        set({ walletBalance: bal });
-      }
+      const { getFlowBalance } = await import('@/lib/flow/scripts');
+      const bal = await getFlowBalance(address);
+      set({ walletBalance: bal });
     } catch (error) {
       console.error("Error refreshing wallet balance:", error);
     }
@@ -171,22 +139,22 @@ export const createWalletSlice: StateCreator<WalletState> = (set, get) => ({
   },
 
   /**
-   * Set active network (BNB, SOL, SUI, XLM, XTZ or NEAR)
+   * Set active network (FLOW only)
    */
-  setNetwork: (network: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null) => {
+  setNetwork: (network: 'FLOW' | null) => {
     set({ network });
   },
 
   /**
-   * Set preferred network (manually chosen by user)
+   * Set preferred network (FLOW only)
    */
-  setPreferredNetwork: (network: 'BNB' | 'SOL' | 'SUI' | 'XLM' | 'XTZ' | 'NEAR' | null) => {
+  setPreferredNetwork: (network: 'FLOW' | null) => {
     set({ preferredNetwork: network });
     if (typeof window !== 'undefined') {
       if (network) {
-        localStorage.setItem('solnomo_preferred_network', network);
+        localStorage.setItem('flownomo_preferred_network', network);
       } else {
-        localStorage.removeItem('solnomo_preferred_network');
+        localStorage.removeItem('flownomo_preferred_network');
       }
     }
   },

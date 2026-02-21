@@ -1,65 +1,26 @@
 import React from 'react';
-import { usePrivy } from '@privy-io/react-auth';
 import { useOverflowStore } from '@/lib/store';
-import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react';
-import { useDisconnectWallet as useSuiDisconnect } from '@mysten/dapp-kit';
+import * as fcl from "@onflow/fcl";
 
 export const WalletConnect: React.FC = () => {
-  const { logout: logoutPrivy, authenticated, user, ready } = usePrivy();
-  const { disconnect: disconnectSolana, connected: solanaConnected } = useSolanaWallet();
-  const { mutate: disconnectSui } = useSuiDisconnect();
-
   const { network, address, setConnectModalOpen, disconnect: disconnectStore, setPreferredNetwork } = useOverflowStore();
 
-  const formatAddress = (addr: string) => {
-    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-  };
-
   const handleDisconnect = () => {
-    if (network === 'BNB') logoutPrivy();
-    else if (network === 'SOL') disconnectSolana();
-    else if (network === 'SUI') disconnectSui();
-    else if (network === 'XLM') {
-      import('@/lib/stellar/wallet-kit').then(m => m.disconnectWallet());
-    }
-    // XTZ and NEAR don't need special SDK disconnect
-
+    fcl.unauthenticate();
     // Explicitly reset our store state and preference
     disconnectStore();
     setPreferredNetwork(null);
   };
 
   const getNetworkIcon = () => {
-    switch (network) {
-      case 'SOL': return '/logos/solana-sol-logo.png';
-      case 'SUI': return '/logos/sui-logo.png';
-      case 'BNB': return '/logos/bnb-bnb-logo.png';
-      case 'XLM': return '/logos/stellar-xlm-logo.png';
-      case 'XTZ': return '/logos/tezos-xtz-logo.png';
-      case 'NEAR': return '/logos/near-logo.svg';
-      default: return '/logos/bnb-bnb-logo.png';
-    }
+    return '/flow-flow-logo.png';
   };
 
   const getNetworkName = () => {
-    switch (network) {
-      case 'SOL': return 'SOL';
-      case 'SUI': return 'SUI';
-      case 'BNB': return 'BNB';
-      case 'XLM': return 'XLM';
-      case 'XTZ': return 'XTZ';
-      case 'NEAR': return 'NEAR';
-      default: return 'Connected';
-    }
+    return network === 'FLOW' ? 'FLOW' : 'DEMO';
   };
 
   const isConnected = !!address;
-
-  if (!ready) {
-    return (
-      <div className="w-20 h-8 bg-white/5 animate-pulse rounded-lg" />
-    );
-  }
 
   return (
     <div className="flex items-center gap-3">
@@ -86,7 +47,7 @@ export const WalletConnect: React.FC = () => {
                 {getNetworkName()}
               </span>
               <span className="text-white text-[10px] sm:text-[11px] font-mono leading-none">
-                {address ? `${address.slice(0, 4)}...${address.slice(-3)}` : '...'}
+                {address ? `${address.slice(0, 7)}...${address.slice(-5)}` : '...'}
               </span>
             </div>
           </div>
@@ -105,3 +66,4 @@ export const WalletConnect: React.FC = () => {
     </div>
   );
 };
+

@@ -84,6 +84,7 @@ export default function AdminDashboard() {
     const getExplorerUrl = (currency: string, hash: string) => {
         if (!hash || hash === 'INTERNAL') return null;
         switch (currency.toUpperCase()) {
+            case 'FLOW': return `https://testnet.flowscan.org/transaction/${hash}`;
             case 'BNB': return `https://bscscan.com/tx/${hash}`;
             case 'NEAR': return `https://nearblocks.io/txns/${hash}`;
             case 'SOL': return `https://solscan.io/tx/${hash}`;
@@ -108,7 +109,7 @@ export default function AdminDashboard() {
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
         link.setAttribute("href", url);
-        link.setAttribute("download", `bynomo_access_codes_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.setAttribute("download", `flownomo_access_codes_${new Date().toISOString().slice(0, 10)}.csv`);
         link.style.visibility = 'hidden';
         document.body.appendChild(link);
         link.click();
@@ -381,7 +382,7 @@ export default function AdminDashboard() {
                                             </div>
 
                                             <div className="flex flex-wrap gap-2">
-                                                {['BNB', 'NEAR', 'SOL', 'SUI', 'XTZ', 'XLM'].map(chain => (
+                                                {['FLOW'].map(chain => (
                                                     <button
                                                         key={chain}
                                                         onClick={() => setChainFilter(prev => prev === chain ? 'ALL' : chain)}

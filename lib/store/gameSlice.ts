@@ -2,7 +2,7 @@
  * Game state slice for Zustand store
  * Manages game state, active rounds, price data, and betting actions
  * 
- * Note: After BNB migration, game logic remains off-chain.
+ * Note: After Flow migration, game logic remains off-chain.
  * Only deposit/withdrawal operations interact with the blockchain.
  */
 
@@ -126,8 +126,8 @@ const DEFAULT_TARGET_CELLS: TargetCell[] = [
  */
 export const createGameSlice: StateCreator<any> = (set, get) => ({
   // Initial state
-  gameMode: 'binomo', // Default to binomo mode
-  selectedAsset: 'BNB',
+  gameMode: 'binomo', // Default mode
+  selectedAsset: 'FLOW',
   currentPrice: 0,
   priceHistory: [],
   assetPrices: {},
@@ -153,13 +153,13 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
   blitzEndTime: null,
   nextBlitzTime: (() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('binomo_blitz_next');
+      const stored = localStorage.getItem('flownomo_blitz_next');
       if (stored) {
         const t = parseInt(stored, 10);
         if (t > Date.now()) return t;
       }
       const next = Date.now() + 2 * 60 * 1000;
-      localStorage.setItem('binomo_blitz_next', next.toString());
+      localStorage.setItem('flownomo_blitz_next', next.toString());
       return next;
     }
     return Date.now() + 2 * 60 * 1000;
@@ -263,7 +263,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
    * @param targetId - ID of the target cell (1-8) OR dynamic grid target (e.g., "UP-2.50")
    */
   placeBet: async (amount: string, targetId: string) => {
-    throw new Error("placeBet is deprecated after BNB migration. Use placeBetFromHouseBalance instead.");
+    throw new Error("placeBet is deprecated after Flow migration. Use placeBetFromHouseBalance instead.");
   },
 
   /**
@@ -371,9 +371,8 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
       set({ isPlacingBet: true, error: null });
 
       // Get current network and selected currency from store
-      const network = (get() as any).network || 'BNB';
-      const selectedCurrency = (get() as any).selectedCurrency;
-      const currency = (network === 'SOL' && selectedCurrency) ? selectedCurrency : network;
+      const network = (get() as any).network || 'FLOW';
+      const currency = network === 'FLOW' ? 'FLOW' : 'DEMO';
 
       // Call API endpoint to place bet from house balance
       const response = await fetch('/api/balance/bet', {
@@ -459,7 +458,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
    * @param betId - The unique bet ID to settle
    */
   settleRound: async (betId: string) => {
-    console.log('settleRound called but is deprecated after BNB migration');
+    console.log('settleRound called but is deprecated after Flow migration');
     set({ isSettling: false });
   },
 
@@ -551,7 +550,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
 
     activeBets.forEach((bet: ActiveBet) => {
       // Resolve bet if: asset matches and status is active
-      const betAsset = bet.asset || 'BNB'; // Fallback
+      const betAsset = bet.asset || 'FLOW'; // Fallback
       if (betAsset !== currentSelectedAsset || bet.status !== 'active') return;
 
       // BINOMO (Classic) Logic
@@ -586,7 +585,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
 
   /**
    * Load target cells from configuration
-   * Note: After Sui migration, target cells are configured off-chain.
+   * Note: After Flow migration, target cells are configured off-chain.
    * No blockchain query needed.
    */
   loadTargetCells: async () => {
@@ -631,7 +630,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
           timestamp: now,
           asset: resolvedBet.asset,
           cellId: resolvedBet.cellId,
-          currency: resolvedBet.network || (network || 'BNB')
+          currency: resolvedBet.network || (network || 'FLOW')
         }
       });
 
@@ -644,7 +643,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
             body: JSON.stringify({
               userAddress: address,
               winAmount: payout,
-              currency: resolvedBet.network || (network || 'BNB'),
+              currency: resolvedBet.network || (network || 'FLOW'),
               betId: resolvedBet.id
             })
           }).then(() => {
@@ -685,7 +684,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
           body: JSON.stringify({
             id: resolvedBet.id,
             walletAddress: address,
-            asset: resolvedBet.asset || 'BNB',
+            asset: resolvedBet.asset || 'FLOW',
             direction: resolvedBet.direction,
             amount: resolvedBet.amount,
             multiplier: resolvedBet.multiplier,
@@ -694,7 +693,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
             payout: payout,
             won: won,
             mode: resolvedBet.mode,
-            network: resolvedBet.network || network || 'BNB',
+            network: resolvedBet.network || network || 'FLOW',
           })
         }).catch(err => console.error('Failed to save bet to Supabase:', err));
       }
@@ -737,7 +736,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
       if (blitzEndTime && now >= blitzEndTime) {
         const newNextTime = now + BLITZ_INTERVAL;
         if (typeof window !== 'undefined') {
-          localStorage.setItem('binomo_blitz_next', newNextTime.toString());
+          localStorage.setItem('flownomo_blitz_next', newNextTime.toString());
         }
         set({
           isBlitzActive: false,
@@ -750,7 +749,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
       if (now >= nextBlitzTime) {
         const newNextTime = now + BLITZ_INTERVAL + BLITZ_DURATION;
         if (typeof window !== 'undefined') {
-          localStorage.setItem('binomo_blitz_next', newNextTime.toString());
+          localStorage.setItem('flownomo_blitz_next', newNextTime.toString());
         }
         set({
           isBlitzActive: true,

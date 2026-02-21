@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
             .upsert({
                 id,
                 wallet_address: walletAddress.toLowerCase(),
-                asset: asset || 'BNB',
+                asset: asset || 'FLOW',
                 direction: direction || 'UP',
                 amount: parseFloat(amount) || 0,
                 multiplier: parseFloat(multiplier) || 1.9,
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
                 end_price: parseFloat(endPrice) || 0,
                 payout: parseFloat(payout) || 0,
                 won: !!won,
-                mode: mode || 'bynomo',
-                network: network || 'BNB',
+                mode: mode || 'flownomo',
+                network: network || 'FLOW',
                 resolved_at: new Date().toISOString(),
             }, { onConflict: 'id' });
 

@@ -1,20 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { ethers } from 'ethers';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { useOverflowStore } from '@/lib/store';
 import { useToast } from '@/lib/hooks/useToast';
-import { getBNBConfig } from '@/lib/bnb/config';
-import { getAddress } from 'viem';
-import { Connection, PublicKey } from '@solana/web3.js';
-import { getSuiConfig } from '@/lib/sui/config';
-import { buildDepositTransaction as buildSuiDepositTransaction } from '@/lib/sui/client';
-
-import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react';
-import { useSignAndExecuteTransaction, useCurrentAccount } from '@mysten/dapp-kit';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -33,25 +23,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { wallets: privyWallets } = useWallets();
-  const { authenticated, user } = usePrivy();
-
-  // Solana Hook
-  const { sendTransaction: signAndSendSolana, publicKey: solanaPublicKey } = useSolanaWallet();
-
-  // Sui Hooks
-  const { mutateAsync: signAndExecuteSui } = useSignAndExecuteTransaction();
-  const suiAccount = useCurrentAccount();
-
   const { depositFunds, network, walletBalance, refreshWalletBalance, address } = useOverflowStore();
   const toast = useToast();
 
-  const selectedCurrency = useOverflowStore(state => state.selectedCurrency);
-  const currencySymbol = network === 'SUI' ? 'USDC' : network === 'SOL' ? (selectedCurrency || 'SOL') : network === 'XLM' ? 'XLM' : network === 'XTZ' ? 'XTZ' : network === 'NEAR' ? 'NEAR' : 'BNB';
-  const networkName = network === 'SUI' ? 'Sui Network' : network === 'SOL' ? 'Solana' : network === 'XLM' ? 'Stellar' : network === 'XTZ' ? 'Tezos' : network === 'NEAR' ? 'NEAR Protocol' : 'BNB Chain';
+  const currencySymbol = 'FLOW';
+  const networkName = 'Flow Network';
 
   // Quick select amounts
-  const quickAmounts = network === 'SUI' ? [1, 5, 10, 25] : [0.1, 0.5, 1, 5];
+  const quickAmounts = [1, 5, 10, 25];
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -98,8 +77,8 @@ export const DepositModal: React.FC<DepositModalProps> = ({
 
   const handleMaxClick = () => {
     if (walletBalance > 0) {
-      // Leave a small amount for gas (except for Sui USDC)
-      const gasBuffer = network === 'SUI' ? 0 : network === 'SOL' ? 0.001 : 0.005;
+      // Flow transactions usually need very little gas
+      const gasBuffer = 0.001;
       const maxAmount = Math.max(0, walletBalance - gasBuffer);
       setAmount(maxAmount.toFixed(4));
       setError(null);
@@ -125,119 +104,23 @@ export const DepositModal: React.FC<DepositModalProps> = ({
       const depositAmount = parseFloat(amount);
       let txHash: string;
 
-      if (network === 'SUI') {
-        if (!suiAccount) throw new Error('Sui wallet not connected');
-        toast.info('Please confirm the transaction in your Sui wallet...');
+      const fcl = await import("@onflow/fcl");
+      const { depositTransaction } = await import("@/lib/flow/transactions");
 
-        const tx = await buildSuiDepositTransaction(depositAmount, address);
-        const result = await signAndExecuteSui({ transaction: tx as any });
-        txHash = result.digest;
+      toast.info('Please confirm the transaction in your Flow wallet...');
 
-      } else if (network === 'SOL') {
-        if (!solanaPublicKey) throw new Error('Solana wallet not connected');
+      const treasuryAddress = process.env.NEXT_PUBLIC_FLOW_TREASURY_ADDRESS || '0xfc2730bbe0bd4941';
 
-        const { buildDepositTransaction, buildTokenDepositTransaction, getSolanaConnection } = await import('@/lib/solana/client');
-        const connection = getSolanaConnection();
-        const selectedCurrency = useOverflowStore.getState().selectedCurrency;
+      const transactionId = await fcl.mutate({
+        cadence: depositTransaction(),
+        args: (arg: any, t: any) => [
+          arg(depositAmount.toFixed(8), t.UFix64),
+          arg(treasuryAddress, t.Address)
+        ],
+        limit: 1000
+      });
 
-        let transaction;
-        if (selectedCurrency === 'BYNOMO') {
-          const BYNOMO_MINT = 'Bi4NEEQhtrFdnoS9NjrXaWkQftXifh2t3RzQHSTQpump';
-          transaction = await buildTokenDepositTransaction(depositAmount, address, BYNOMO_MINT);
-        } else {
-          transaction = await buildDepositTransaction(depositAmount, address);
-        }
-
-        toast.info('Please confirm the transaction in your Solana wallet...');
-
-        txHash = await signAndSendSolana(transaction, connection);
-      } else if (network === 'NEAR') {
-        const { depositNEAR } = await import('@/lib/near/wallet');
-        toast.info('Please confirm the transaction in your NEAR wallet...');
-        txHash = await depositNEAR(amount);
-      } else if (network === 'XTZ') {
-        const { BeaconWallet } = await import('@taquito/beacon-wallet');
-        const { NetworkType } = await import('@airgap/beacon-types');
-        const { getTezosClient } = await import('@/lib/tezos/client');
-
-        const rpcUrl = process.env.NEXT_PUBLIC_TEZOS_RPC_URL || 'https://rpc.tzkt.io/mainnet';
-        const wallet = new BeaconWallet({
-          name: "BYNOMO",
-          preferredNode: rpcUrl,
-          network: {
-            type: NetworkType.MAINNET,
-            rpcUrl,
-          },
-        } as any);
-
-        // Clear any cached connection that might use old ecadinfra RPC
-        await wallet.clearActiveAccount();
-        await wallet.requestPermissions();
-
-        const tezos = await getTezosClient();
-        tezos.setWalletProvider(wallet);
-
-        const treasuryAddress = process.env.NEXT_PUBLIC_TEZOS_TREASURY_ADDRESS;
-        if (!treasuryAddress) throw new Error('Tezos treasury not configured');
-
-        toast.info('Please confirm the transaction in your Tezos wallet...');
-        const op = await tezos.wallet.transfer({ to: treasuryAddress, amount: depositAmount }).send();
-        txHash = op.opHash;
-      } else if (network === 'XLM') {
-        // Stellar deposit via Stellar Wallets Kit
-        const { StellarWalletsKit, WalletNetwork, allowAllModules } = await import('@creit.tech/stellar-wallets-kit');
-        const { TransactionBuilder, Networks, Operation, Asset } = await import('@stellar/stellar-sdk');
-        const { Horizon } = await import('@stellar/stellar-sdk');
-
-        const treasuryAddress = process.env.NEXT_PUBLIC_STELLAR_TREASURY_ADDRESS;
-        if (!treasuryAddress) throw new Error('Stellar treasury not configured');
-
-        const server = new Horizon.Server(process.env.NEXT_PUBLIC_STELLAR_HORIZON_URL || 'https://horizon.stellar.org');
-        const account = await server.loadAccount(address);
-
-        const transaction = new TransactionBuilder(account, {
-          fee: '100',
-          networkPassphrase: Networks.PUBLIC,
-        })
-          .addOperation(
-            Operation.payment({
-              destination: treasuryAddress,
-              asset: Asset.native(),
-              amount: depositAmount.toFixed(7),
-            })
-          )
-          .setTimeout(30)
-          .build();
-
-        const kit = new StellarWalletsKit({
-          network: WalletNetwork.PUBLIC,
-          modules: allowAllModules(),
-        });
-
-        toast.info('Please confirm the transaction in your Stellar wallet...');
-        const { signedTxXdr } = await kit.signTransaction(transaction.toXDR());
-        const result = await server.submitTransaction(TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC));
-        txHash = (result as any).hash || (result as any).id || signedTxXdr.slice(0, 16);
-      } else {
-        // BNB (EVM via Privy)
-        if (!authenticated) throw new Error('Not authenticated with Privy');
-        const wallet = privyWallets.find(w => w.address.toLowerCase() === address.toLowerCase());
-        if (!wallet) throw new Error('Privy wallet not found');
-
-        const ethereumProvider = await wallet.getEthereumProvider();
-        const provider = new ethers.BrowserProvider(ethereumProvider);
-        const signer = await provider.getSigner();
-
-        const bnbConfig = getBNBConfig();
-        if (!bnbConfig.treasuryAddress) throw new Error('Treasury address not configured');
-
-        toast.info('Please confirm the transaction in your wallet...');
-        const txResponse = await signer.sendTransaction({
-          to: getAddress(bnbConfig.treasuryAddress),
-          value: ethers.parseEther(depositAmount.toString()),
-        });
-        txHash = txResponse.hash;
-      }
+      txHash = transactionId;
 
       toast.info('Transaction submitted. Waiting for confirmation...');
 
@@ -280,12 +163,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
             Wallet Balance
           </p>
           <p className="text-[#00f5ff] text-xl font-bold font-mono flex items-center gap-2">
-            {network === 'SUI' && <img src="/usd-coin-usdc-logo.png" alt="USDC" className="w-5 h-5" />}
-            {network === 'XTZ' && <img src="/logos/tezos-xtz-logo.png" alt="XTZ" className="w-5 h-5" />}
-            {network === 'BNB' && <img src="/logos/bnb-bnb-logo.png" alt="BNB" className="w-5 h-5" />}
-            {currencySymbol === 'BYNOMO' ? <img src="/overflowlogo.png" alt="BYNOMO" className="w-5 h-5" /> : (network === 'SOL' && <img src="/logos/solana-sol-logo.png" alt="SOL" className="w-5 h-5" />)}
-            {network === 'XLM' && <img src="/logos/stellar-xlm-logo.png" alt="XLM" className="w-5 h-5" />}
-            {network === 'NEAR' && <img src="/logos/near-logo.svg" alt="NEAR" className="w-5 h-5" />}
+            <img src="/flow-flow-logo.png" alt="FLOW" className="w-5 h-5" />
             {walletBalance.toFixed(4)} {currencySymbol}
           </p>
         </div>

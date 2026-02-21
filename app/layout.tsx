@@ -22,20 +22,16 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://bynomo.fun'),
-  title: "Bynomo - Trade over 300+ Crypto, Stocks, Metals and Forex with 5s-1m time-charts",
+  metadataBase: new URL('https://flownomo.fun'),
+  title: "Flownomo - Trade over 300+ Crypto, Stocks, Metals and Forex on Flow Network",
   description:
-    "The first on-chain binary options trading dapp. Powered by Pyth Hermes price attestations, Supabase, and x402-style payments. Oracle-bound resolution, minimal trust.",
+    "The first Flow-native binary options trading dapp. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
   keywords: [
     "binary options",
     "crypto trading",
+    "Flow Network",
+    "Flow Blockchain",
     "Pyth oracle",
-    "BNB",
-    "Solana",
-    "Sui",
-    "Stellar",
-    "Tezos",
-    "NEAR",
     "Web3",
     "prediction",
   ],
@@ -45,16 +41,16 @@ export const metadata: Metadata = {
     apple: "/overflowlogo.ico",
   },
   openGraph: {
-    title: "Bynomo — Trade over 300+ Crypto, Stocks, Metals and Forex with 5s-1m time-charts",
+    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow",
     description:
-      "The first on-chain binary options trading dapp. Powered by Pyth Hermes price attestations, Supabase, and x402-style payments. Oracle-bound resolution, minimal trust",
-    images: [{ url: '/overflowlogo.png', width: 512, height: 512, alt: 'Bynomo' }],
+      "The first Flow-native binary options trading dapp. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
+    images: [{ url: '/flow-flow-logo.png', width: 512, height: 512, alt: 'Flownomo' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Bynomo — Trade over 300+ Crypto, Stocks, Metals and Forex with 5s-1m time-charts",
-    description: "Trade binary options with oracle-bound resolution and minimal trust.",
-    images: ['/overflowlogo.png'],
+    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow",
+    description: "Trade binary options on Flow Network with oracle-bound resolution.",
+    images: ['/flow-flow-logo.png'],
   },
 };
 

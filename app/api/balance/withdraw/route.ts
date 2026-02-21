@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
-import { ethers } from 'ethers';
-import { transferBNBFromTreasury } from '@/lib/bnb/backend-client';
+import { transferFlowFromTreasury } from '@/lib/flow/backend-client';
 
 interface WithdrawRequest {
   userAddress: string;
@@ -12,7 +11,7 @@ interface WithdrawRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: WithdrawRequest = await request.json();
-    const { userAddress, amount, currency = 'BNB' } = body;
+    const { userAddress, amount, currency = 'FLOW' } = body;
 
     // Validate required fields
     if (!userAddress || amount === undefined || amount === null) {
@@ -31,29 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Detect network flags for backend transfer
-    let isBNB = ethers.isAddress(userAddress);
-    let isSOL = false;
-    let isSUI = false;
-    let isXLM = false;
-    let isXTZ = false;
-    let isNEAR = false;
-
-    if (!isBNB) {
-      if (/^0x[0-9a-fA-F]{64}$/.test(userAddress)) {
-        isSUI = true;
-      } else if (/^G[A-Z2-7]{55}$/.test(userAddress)) {
-        isXLM = true;
-      } else if (/^(tz1|tz2|tz3|KT1)[a-zA-Z0-9]{33}$/.test(userAddress)) {
-        isXTZ = true;
-      } else if (/^[0-9a-fA-F]{64}$/.test(userAddress) || /^(([a-z\d]+[-_])*[a-z\d]+\.)+[a-z\d]+$/.test(userAddress)) {
-        // NEAR: implicit account (64 hex chars) OR named account (e.g., user.near, user.testnet)
-        isNEAR = true;
-      } else {
-        // Must be Solana if isValidAddress passed
-        isSOL = true;
-      }
-    }
+    // Flow-only network validation — all addresses are 0x-prefixed Flow addresses
 
     if (amount <= 0) {
       return NextResponse.json(
@@ -96,32 +73,8 @@ export async function POST(request: NextRequest) {
     // 3. Perform transfer from treasury based on network
     let signature: string;
     try {
-      if (isBNB) {
-        signature = await transferBNBFromTreasury(userAddress, netWithdrawAmount);
-      } else if (isSOL) {
-        if (currency === 'BYNOMO') {
-          const { transferTokenFromTreasury } = await import('@/lib/solana/backend-client');
-          const BYNOMO_MINT = 'Bi4NEEQhtrFdnoS9NjrXaWkQftXifh2t3RzQHSTQpump';
-          signature = await transferTokenFromTreasury(userAddress, netWithdrawAmount, BYNOMO_MINT);
-        } else {
-          const { transferSOLFromTreasury } = await import('@/lib/solana/backend-client');
-          signature = await transferSOLFromTreasury(userAddress, netWithdrawAmount);
-        }
-      } else if (isSUI) {
-        const { transferUSDCFromTreasury } = await import('@/lib/sui/backend-client');
-        signature = await transferUSDCFromTreasury(userAddress, netWithdrawAmount);
-      } else if (isXLM) {
-        const { transferXLMFromTreasury } = await import('@/lib/stellar/backend-client');
-        signature = await transferXLMFromTreasury(userAddress, netWithdrawAmount);
-      } else if (isXTZ) {
-        const { transferXTZFromTreasury } = await import('@/lib/tezos/backend-client');
-        signature = await transferXTZFromTreasury(userAddress, netWithdrawAmount);
-      } else if (isNEAR) {
-        const { transferNEARFromTreasury } = await import('@/lib/near/backend-client');
-        signature = await transferNEARFromTreasury(userAddress, netWithdrawAmount);
-      } else {
-        throw new Error('Unsupported network for withdrawal');
-      }
+      // Flow-only withdrawal via FCL backend
+      signature = await transferFlowFromTreasury(userAddress, netWithdrawAmount);
     } catch (e: any) {
       console.error('Transfer failed:', e);
       return NextResponse.json({ error: `Withdrawal failed: ${e.message}` }, { status: 500 });
@@ -142,7 +95,7 @@ export async function POST(request: NextRequest) {
         {
           success: true,
           txHash: signature,
-          warning: 'BNB sent but balance update failed. Please contact support.',
+          warning: 'FLOW sent but balance update failed. Please contact support.',
           error: error.message
         },
         { status: 200 }

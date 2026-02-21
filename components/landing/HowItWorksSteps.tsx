@@ -9,7 +9,7 @@ const STEPS = [
         id: '01',
         phase: 'LIQUIDITY INJECTION',
         title: 'Neural Link & Deposit',
-        description: 'Connect your wallet and move assets into the BYNOMO hybrid vault. Your liquidity is secured on-chain while enabling millisecond execution speed.',
+        description: 'Connect your wallet and move assets into the Flownomo hybrid vault. Your liquidity is secured on-chain while enabling millisecond execution speed.',
         color: 'from-blue-500/20 to-cyan-400/20',
         accent: '#3b82f6'
     },

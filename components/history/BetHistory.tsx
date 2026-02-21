@@ -77,7 +77,7 @@ export const BetHistory: React.FC = () => {
             <div className="bg-gray-900 rounded p-3">
               <p className="text-gray-400 text-xs uppercase tracking-wider">Net P/L</p>
               <p className={`text-lg font-bold ${stats.netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {stats.netProfit >= 0 ? '+' : ''}{stats.netProfit.toFixed(4)} BNB
+                {stats.netProfit >= 0 ? '+' : ''}{stats.netProfit.toFixed(4)} FLOW
               </p>
             </div>
           </div>

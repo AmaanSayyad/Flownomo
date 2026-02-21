@@ -34,8 +34,8 @@ export interface BalanceState {
 export const createBalanceSlice: StateCreator<BalanceState> = (set, get) => ({
   // Initial state
   houseBalance: 0,
-  demoBalance: 10000, // 10,000 demo BNB to start
-  accountType: (typeof window !== 'undefined' && localStorage.getItem('bynomo_account_type') as 'real' | 'demo') || 'real', // Persist account type
+  demoBalance: 10000, // 10,000 demo FLOW to start
+  accountType: (typeof window !== 'undefined' && localStorage.getItem('flownomo_account_type') as 'real' | 'demo') || 'real', // Persist account type
   userTier: 'free',
   isLoading: false,
   error: null,
@@ -48,14 +48,12 @@ export const createBalanceSlice: StateCreator<BalanceState> = (set, get) => ({
   fetchBalance: async (address: string) => {
     const { accountType } = get();
     // Access network and currency from combined store if available
-    let network = (get() as any).network || 'BNB';
-    const selectedCurrency = (get() as any).selectedCurrency;
-    let currency = (network === 'SOL' && selectedCurrency) ? selectedCurrency : network;
+    let network = (get() as any).network || 'FLOW';
+    let currency = network === 'FLOW' ? 'FLOW' : 'DEMO';
 
-    if (address && (address.endsWith('.near') || address.endsWith('.testnet') || /^[0-9a-fA-F]{64}$/.test(address))) {
-      currency = 'NEAR';
-    } else if (address && /^(tz1|tz2|tz3|KT1)[a-zA-Z0-9]{33}$/.test(address)) {
-      currency = 'XTZ';
+    if (address && (address.startsWith('0x') && address.length === 18)) {
+      // Flow addresses are typically 18 chars starting with 0x
+      currency = 'FLOW';
     }
 
     // Skip API fetch for demo mode as it uses local state only
@@ -131,7 +129,7 @@ export const createBalanceSlice: StateCreator<BalanceState> = (set, get) => ({
     const newType = accountType === 'real' ? 'demo' : 'real';
     set({ accountType: newType });
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bynomo_account_type', newType);
+      localStorage.setItem('flownomo_account_type', newType);
     }
   },
 
@@ -143,13 +141,11 @@ export const createBalanceSlice: StateCreator<BalanceState> = (set, get) => ({
    * @param txHash - Transaction hash for audit trail
    */
   depositFunds: async (address: string, amount: number, txHash: string) => {
-    let network = (get() as any).network || 'BNB';
-    const selectedCurrency = (get() as any).selectedCurrency;
-    let currency = (network === 'SOL' && selectedCurrency) ? selectedCurrency : network;
+    let network = (get() as any).network || 'FLOW';
+    let currency = network === 'FLOW' ? 'FLOW' : 'DEMO';
 
-    // Override network for NEAR addresses
-    if (address.endsWith('.near') || address.endsWith('.testnet') || /^[0-9a-fA-F]{64}$/.test(address)) {
-      currency = 'NEAR';
+    if (address && (address.startsWith('0x') && address.length === 18)) {
+      currency = 'FLOW';
     }
 
     try {
@@ -202,9 +198,8 @@ export const createBalanceSlice: StateCreator<BalanceState> = (set, get) => ({
    * @param amount - Withdrawal amount
    */
   withdrawFunds: async (address: string, amount: number) => {
-    const network = (get() as any).network || 'BNB';
-    const selectedCurrency = (get() as any).selectedCurrency;
-    const currency = (network === 'SOL' && selectedCurrency) ? selectedCurrency : network;
+    let network = (get() as any).network || 'FLOW';
+    const currency = network === 'FLOW' ? 'FLOW' : 'DEMO';
 
     try {
       set({ isLoading: true, error: null });

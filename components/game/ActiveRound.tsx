@@ -16,7 +16,7 @@ export const ActiveRound: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Only show BYNOMO-style (classic) bets that have strikePrice and endTime
+  // Only show Flownomo-style (classic) bets that have strikePrice and endTime
   const binomoBets = activeBets.filter(
     (bet): bet is ActiveBet & { strikePrice: number; endTime: number } =>
       bet.strikePrice != null && bet.endTime != null
