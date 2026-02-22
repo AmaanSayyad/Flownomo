@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     try {
         // Parse request body
         const body: WinRequest = await request.json();
-        const { userAddress, winAmount, currency = 'BNB', betId } = body;
+        const { userAddress, winAmount, currency = 'FLOW', betId } = body;
 
         // Validate required fields
         if (!userAddress || winAmount === undefined || winAmount === null) {

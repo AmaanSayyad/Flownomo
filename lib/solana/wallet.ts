@@ -1,11 +1,9 @@
 /**
- * Solana Wallet Integration Module
+ * Solana Wallet Integration Module (legacy / no-op for Flow-only Flownomo)
+ * Store only supports FLOW; this hook no longer syncs Solana to avoid type errors.
  */
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useOverflowStore } from '@/lib/store';
-import { useEffect } from 'react';
-import { logWalletError, logInfo } from '@/lib/logging/error-logger';
 
 export interface WalletState {
     isConnected: boolean;
@@ -14,52 +12,11 @@ export interface WalletState {
 }
 
 /**
- * Hook for managing Solana wallet connection
+ * Hook for Solana wallet connection state. No-op in Flow-only app—does not sync to store.
  */
 export function useWalletConnection() {
     const { connected, publicKey, wallet, disconnect: solanaDisconnect } = useWallet();
-
-    // Get store actions
-    const setAddress = useOverflowStore(state => state.setAddress);
-    const setIsConnected = useOverflowStore(state => state.setIsConnected);
-    const setNetwork = useOverflowStore(state => state.setNetwork);
-    const fetchBalance = useOverflowStore(state => state.fetchBalance);
-    const refreshWalletBalance = useOverflowStore(state => state.refreshWalletBalance);
-
-    const preferredNetwork = useOverflowStore(state => state.preferredNetwork);
-
-    // Sync wallet state with store
-    useEffect(() => {
-        // Only update store if this is the preferred network or no preference is set
-        if (publicKey && (preferredNetwork === 'SOL' || preferredNetwork === null)) {
-            const address = publicKey.toBase58();
-            setAddress(address);
-            setIsConnected(true);
-            setNetwork('SOL');
-
-            // Fetch house and wallet balance when wallet connects
-            fetchBalance(address).catch(console.error);
-            refreshWalletBalance();
-
-            // Persist session to localStorage
-            if (typeof window !== 'undefined') {
-                localStorage.setItem('solnomo_wallet_session', JSON.stringify({
-                    address: address,
-                    walletName: wallet?.adapter.name || null,
-                    timestamp: Date.now()
-                }));
-            }
-        } else if (!publicKey && preferredNetwork === 'SOL') {
-            // Only clear if we were the active network
-            setAddress(null);
-            setIsConnected(false);
-
-            // Clear localStorage session
-            if (typeof window !== 'undefined') {
-                localStorage.removeItem('solnomo_wallet_session');
-            }
-        }
-    }, [publicKey, wallet?.adapter.name, setAddress, setIsConnected, fetchBalance, preferredNetwork]);
+    const address = publicKey?.toBase58() ?? null;
 
     const disconnect = async () => {
         try {
@@ -70,11 +27,10 @@ export function useWalletConnection() {
         }
     };
 
-    // Build wallet state
     const state: WalletState = {
         isConnected: connected,
-        address: publicKey?.toBase58() || null,
-        walletName: wallet?.adapter.name || null
+        address,
+        walletName: wallet?.adapter.name ?? null
     };
 
     return {
