@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract BynomoTreasury {
+contract FlownomoTreasury {
     address public owner;
 
     event Received(address from, uint256 amount);

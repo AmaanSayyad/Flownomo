@@ -27,7 +27,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
   const toast = useToast();
 
   const currencySymbol = 'FLOW';
-  const networkName = 'Flow Network';
+  const networkName = 'Flow Testnet';
 
   // Reset state when modal opens/closes
   useEffect(() => {

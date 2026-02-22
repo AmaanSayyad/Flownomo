@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
         return () => clearInterval(interval);
     }, [fetchLeaderboard]);
 
-    // All entries on Flownomo use Flow network
+    // All entries on Flownomo use Flow testnet
     const getNetworkIcon = (_network: string) => '/flow-flow-logo.png';
     const getCurrencySymbol = (_network: string) => 'FLOW';
 
@@ -93,7 +93,7 @@ export default function LeaderboardPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="text-white/30 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-xl">
-                            The elite traders of the Flownomo protocol. Ranked by net profit on the Flow network.
+                            The elite traders of the Flownomo protocol. Ranked by net profit on Flow Testnet.
                         </motion.p>
                     </div>
 

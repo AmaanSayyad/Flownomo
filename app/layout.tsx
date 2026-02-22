@@ -23,13 +23,13 @@ const orbitron = Orbitron({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://flownomo.fun'),
-  title: "Flownomo - Trade over 300+ Crypto, Stocks, Metals and Forex on Flow Network",
+  title: "Flownomo - Trade over 300+ Crypto, Stocks, Metals and Forex on Flow Testnet",
   description:
-    "The first Flow-native binary options trading dapp. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
+    "The first Flow-native binary options trading dapp on Flow Testnet. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
   keywords: [
     "binary options",
     "crypto trading",
-    "Flow Network",
+    "Flow Testnet",
     "Flow Blockchain",
     "Pyth oracle",
     "Web3",
@@ -41,15 +41,15 @@ export const metadata: Metadata = {
     apple: "/overflowlogo.ico",
   },
   openGraph: {
-    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow",
+    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow Testnet",
     description:
-      "The first Flow-native binary options trading dapp. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
+      "The first Flow-native binary options trading dapp on Flow Testnet. Powered by Flow Blockchain, Pyth Hermes price attestations, and minimal trust resolution.",
     images: [{ url: '/flow-flow-logo.png', width: 512, height: 512, alt: 'Flownomo' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow",
-    description: "Trade binary options on Flow Network with oracle-bound resolution.",
+    title: "Flownomo — Trade over 300+ Crypto, Stocks, Metals and Forex on Flow Testnet",
+    description: "Trade binary options on Flow Testnet with oracle-bound resolution.",
     images: ['/flow-flow-logo.png'],
   },
 };

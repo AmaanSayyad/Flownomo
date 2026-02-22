@@ -12,7 +12,7 @@ const steps = [
     {
         id: "01",
         title: "Hybrid Custody",
-        desc: "Solana-speed performance with non-custodial security. Flownomo connects your wallet to a high-speed house balance for instant execution without gas lag."
+        desc: "Flow Testnet performance with non-custodial security. Flownomo connects your wallet to a high-speed house balance for instant execution without gas lag."
     },
     {
         id: "02",
@@ -67,11 +67,11 @@ const testimonials = [
 const faqs = [
     {
         question: "How does the House Balance work?",
-        answer: "To ensure millisecond execution, Flownomo uses a hybrid house balance system. You deposit SOL or BNB into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
+        answer: "To ensure millisecond execution, Flownomo uses a hybrid house balance system. You deposit FLOW on Flow Testnet into a non-custodial treasury, which is then reflected in your game balance for instant off-chain betting."
     },
     {
         question: "What assets can I trade?",
-        answer: "Flownomo supports a wide range of assets including major cryptos (BTC, ETH, SOL), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
+        answer: "Flownomo supports a wide range of assets including major cryptos (BTC, ETH, FLOW), precious metals (Gold, Silver), and top-tier stocks (AAPL, NVDA, TSLA) through Pyth price feeds."
     },
     {
         question: "What are Blitz Rounds?",

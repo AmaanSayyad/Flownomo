@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Database error in withdrawal update:', error);
-      // Note: At this point the BNB has been sent!
+      // Note: At this point the FLOW has been sent!
       return NextResponse.json(
         {
           success: true,

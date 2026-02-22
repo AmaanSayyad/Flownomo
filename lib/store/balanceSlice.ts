@@ -2,8 +2,7 @@
  * Balance state slice for Zustand store
  * Manages house balance state and operations (deposit, withdraw, bet)
  * 
- * Task: 8.2 Update balance slice for BNB migration
- * Requirements: 3.5
+ * Balance slice for Flownomo (Flow network only).
  */
 
 import { StateCreator } from "zustand";

@@ -17,7 +17,7 @@ export const config = createConfig(
         appName: 'Flownomo',
 
         // Optional App Info
-        appDescription: 'Flownomo on Flow Network',
+        appDescription: 'Flownomo on Flow Testnet',
         appUrl: 'https://flownomo.fun',
         appIcon: 'https://flownomo.fun/logo.png',
     }),

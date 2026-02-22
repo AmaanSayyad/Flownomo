@@ -45,7 +45,7 @@ export const ActiveRound: React.FC = () => {
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${isUp ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'}`}>
                     {isUp ? 'UP' : 'DOWN'}
                   </span>
-                  <span className="text-white font-mono text-sm font-bold">{bet.amount} BNB</span>
+                  <span className="text-white font-mono text-sm font-bold">{bet.amount} FLOW</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-gray-400 text-[10px] font-mono">EXPIRING IN</span>
@@ -73,7 +73,7 @@ export const ActiveRound: React.FC = () => {
               <div className="flex justify-between items-center pt-1">
                 <span className="text-gray-400 text-[10px] uppercase font-bold tracking-tighter">Potential Payout</span>
                 <span className={`text-sm font-bold font-mono ${isWinning ? 'text-emerald-400' : 'text-gray-500'}`}>
-                  {potentialPayout} BNB
+                  {potentialPayout} FLOW
                 </span>
               </div>
             </div>

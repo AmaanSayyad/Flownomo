@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse request body
     const body: PayoutRequest = await request.json();
-    const { userAddress, payoutAmount, currency = 'BNB', betId } = body;
+    const { userAddress, payoutAmount, currency = 'FLOW', betId } = body;
 
     // Validate required fields
     if (!userAddress || payoutAmount === undefined || payoutAmount === null || !betId) {

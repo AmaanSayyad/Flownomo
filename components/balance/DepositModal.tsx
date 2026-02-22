@@ -27,7 +27,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({
   const toast = useToast();
 
   const currencySymbol = 'FLOW';
-  const networkName = 'Flow Network';
+  const networkName = 'Flow Testnet';
 
   // Quick select amounts
   const quickAmounts = [1, 5, 10, 25];

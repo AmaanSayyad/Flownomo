@@ -46,7 +46,7 @@ export const WalletConnectModal: React.FC = () => {
                     <div className="p-5 sm:p-6 border-b border-white/5 flex items-center justify-between bg-gradient-to-r from-green-500/10 to-transparent shrink-0">
                         <div>
                             <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">Connect Wallet</h2>
-                            <p className="text-[11px] sm:text-sm text-gray-400 mt-1">Select your preferred wallet for Flow</p>
+                            <p className="text-[11px] sm:text-sm text-gray-400 mt-1">Select your wallet for Flow Testnet</p>
                         </div>
                         <button
                             onClick={() => setOpen(false)}
@@ -69,8 +69,7 @@ export const WalletConnectModal: React.FC = () => {
                             </div>
                             <div className="flex-1 text-left">
                                 <div className="flex items-center gap-2">
-                                    <span className="font-bold text-white text-sm sm:text-base">Flow Network</span>
-                                    <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[10px] bg-green-500/20 text-green-500 font-bold uppercase tracking-wider">Testnet</span>
+                                    <span className="font-bold text-white text-sm sm:text-base">Flow Testnet</span>
                                 </div>
                                 <p className="text-[10px] sm:text-xs text-gray-400 mt-0.5">Lilico, Blocto, FCL, etc.</p>
                             </div>
@@ -83,7 +82,7 @@ export const WalletConnectModal: React.FC = () => {
                         <p className="text-[8px] sm:text-[10px] text-gray-500 uppercase tracking-widest font-bold">
                             FLOWNOMO Protocol · Pyth Hermes
                         </p>
-                        <p className="text-[9px] text-gray-600 mt-1">Powered by Flow Blockchain · Pyth Hermes</p>
+                        <p className="text-[9px] text-gray-600 mt-1">Powered by Flow Testnet · Pyth Hermes</p>
                     </div>
                 </motion.div>
             </div>
