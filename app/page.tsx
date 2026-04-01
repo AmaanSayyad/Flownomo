@@ -6,7 +6,8 @@ import GridScan from '@/components/ui/GridScan';
 import TrueFocus from '@/components/ui/TrueFocus';
 import HowItWorksDemo from './waitlist/HowItWorksDemo';
 import HowItWorksSteps from '@/components/landing/HowItWorksSteps';
-import { supabase } from '@/lib/supabase/client';
+import DemoVideoSection from '@/components/landing/DemoVideoSection';
+import LogosMarqueeSection from '@/components/landing/LogosMarqueeSection';
 import './waitlist/waitlist.css';
 
 const steps = [
@@ -89,10 +90,6 @@ const faqs = [
 ];
 
 export default function WaitlistPage() {
-    const [email, setEmail] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [activeIdx, setActiveIdx] = useState(0);
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
@@ -112,35 +109,6 @@ export default function WaitlistPage() {
             clearInterval(interval);
         };
     }, []);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email || isSubmitting) return;
-        setIsSubmitting(true);
-        try {
-            const { error } = await supabase
-                .from('waitlist')
-                .insert([{ email }]);
-
-            if (error) {
-                if (error.code === '23505') { // Unique violation
-                    setIsSubmitted(true); // Already on the list
-                } else {
-                    console.error('Waitlist submission error:', error);
-                    // Standard toast already exists in the app? Let's check.
-                    // For now, let's keep it simple as the original code was also simple.
-                }
-            } else {
-                setIsSubmitted(true);
-            }
-        } catch (error) {
-            console.error('Waitlist submission error:', error);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const isExpanded = isHovered || email.length > 0;
 
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -213,57 +181,34 @@ export default function WaitlistPage() {
                         </motion.div>
                     </div>
 
-                    {/* RIGHT SIDE: Tagline & Form */}
+                    {/* RIGHT SIDE: Tagline & live CTA */}
                     <motion.div
                         initial={{ x: 100, opacity: 0, filter: "blur(10px)" }}
                         animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
                         transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="flex flex-col justify-center items-start lg:pl-4 z-10"
+                        className="flex flex-col justify-center items-start lg:pl-4 z-10 -mt-8 lg:mt-0 gap-6 lg:gap-8"
                     >
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                            className="text-3xl lg:text-5xl font-bold text-white mb-8 tracking-tight"
+                            className="text-2xl lg:text-5xl font-bold text-white tracking-tight"
                         >
                             Predict the next tick.
                         </motion.h2>
-
-                        <div className="w-full max-w-md">
-                            {!isSubmitted ? (
-                                <form onSubmit={handleSubmit} className="w-full">
-                                    <div
-                                        className={`relative flex items-center bg-white/5 border border-white/10 rounded-full p-2 transition-all duration-300 ${isHovered || email ? 'bg-white/10 border-white/20' : ''}`}
-                                        onMouseEnter={() => setIsHovered(true)}
-                                        onMouseLeave={() => setIsHovered(false)}
-                                    >
-                                        <input
-                                            type="email"
-                                            placeholder="Enter your email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            className="bg-transparent border-none outline-none text-white px-6 py-3 w-full placeholder:text-white/30 font-medium"
-                                        />
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                            className="px-8 py-3 bg-white text-black rounded-full font-bold uppercase tracking-wider text-sm hover:bg-gray-200 transition-colors shrink-0"
-                                        >
-                                            {isSubmitting ? '...' : 'Join'}
-                                        </button>
-                                    </div>
-                                </form>
-                            ) : (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="p-6 rounded-3xl bg-green-500/10 border border-green-500/20 text-green-400 font-medium flex items-center gap-3"
-                                >
-                                    <span className="text-xl">✨</span> You're on the list.
-                                </motion.div>
-                            )}
-                        </div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }}
+                            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-black rounded-full font-black uppercase tracking-widest text-xs sm:text-sm hover:bg-gray-200 transition-colors shadow-[0_20px_50px_-15px_rgba(255,255,255,0.25)]"
+                            aria-label="Scroll to product demo video"
+                        >
+                            Check demo
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                <path d="M6 9l6 6 6-6" />
+                            </svg>
+                        </button>
                     </motion.div>
 
                 </div>
@@ -272,18 +217,18 @@ export default function WaitlistPage() {
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen opacity-50 block lg:hidden" />
             </section>
 
-            <section className="relative py-32 bg-[#02040a] overflow-hidden">
-                <div className="section-content relative z-10 max-w-[1400px] mx-auto px-6">
-                    <div className="text-center mb-16">
-                        <div className="text-white/20 font-mono text-[10px] mb-4 uppercase tracking-[0.4em] flex items-center justify-center gap-3">
+            <section id="how-it-works" className="relative py-16 sm:py-24 lg:py-32 bg-[#02040a] overflow-visible">
+                <div className="section-content relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6">
+                    <div className="text-center mb-10 sm:mb-14 lg:mb-16 px-1">
+                        <div className="text-white/25 font-mono text-[9px] sm:text-[10px] mb-3 sm:mb-4 uppercase tracking-[0.2em] sm:tracking-[0.35em] flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
                             <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse shadow-[0_0_10px_purple]" />
-                            Execution Protocol
+                            How It Works
                         </div>
-                        <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white mb-6 uppercase" style={{ fontFamily: 'var(--font-orbitron)' }}>
-                            Scale your <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/20">trading</span>
+                        <h2 className="text-[1.65rem] leading-[1.05] min-[400px]:text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-white mb-4 sm:mb-6 uppercase px-1" style={{ fontFamily: 'var(--font-orbitron)' }}>
+                            How <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/20">Flownomo works</span>
                         </h2>
-                        <p className="text-white/30 max-w-2xl mx-auto text-sm font-bold uppercase tracking-widest leading-relaxed">
-                            A triple-layered protocol designed for speed, precision, and trustless settlement.
+                        <p className="text-white/35 max-w-2xl mx-auto text-[11px] sm:text-sm font-bold uppercase tracking-wide sm:tracking-widest leading-relaxed px-2">
+                            Connect, deposit, predict, and settle in a fast hybrid flow powered by oracle pricing and secure treasury rails.
                         </p>
                     </div>
 
@@ -296,6 +241,9 @@ export default function WaitlistPage() {
                     <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
                 </div>
             </section>
+
+            <DemoVideoSection />
+            <LogosMarqueeSection />
 
             {/* TESTIMONIALS SECTION */}
             <section>
