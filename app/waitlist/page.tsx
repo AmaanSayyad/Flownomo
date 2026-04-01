@@ -398,9 +398,10 @@ export default function WaitlistPage() {
                     <div className="footer-meta-item">2026 © All rights reserved</div>
 
                     <div className="footer-link-group">
-                        <a href="#" className="footer-meta-item">Twitter</a>
-                        <a href="#" className="footer-meta-item">Discord</a>
-                        <a href="#" className="footer-meta-item">Instagram</a>
+                        <a href="https://x.com/bynomofun" target="_blank" rel="noopener noreferrer" className="footer-meta-item">X / Twitter</a>
+                        <a href="https://discord.com/invite/5MAHQpWZ7b" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Discord</a>
+                        <a href="https://t.me/bynomo" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Telegram</a>
+                        <a href="https://linktr.ee/bynomo.fun" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Linktree</a>
                     </div>
 
                     <div className="footer-link-group">

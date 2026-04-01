@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import GridScan from '@/components/ui/GridScan';
 import TrueFocus from '@/components/ui/TrueFocus';
 import HowItWorksDemo from './waitlist/HowItWorksDemo';
@@ -109,10 +110,6 @@ export default function WaitlistPage() {
             clearInterval(interval);
         };
     }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
 
     return (
         <main className="landing-layout selection:bg-purple-500/30">
@@ -330,12 +327,12 @@ export default function WaitlistPage() {
                 >
                     <div className="cta-glow" />
                     <h2 className="cta-title">Ready to trade the future with decentralized precision?</h2>
-                    <button className="cta-button" onClick={scrollToTop}>
+                    <Link href="/trade" className="cta-button" aria-label="Start trading">
                         Start now
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'translateY(1px)' }}>
                             <path d="m9 18 6-6-6-6" />
                         </svg>
-                    </button>
+                    </Link>
                 </motion.div>
             </section>
 
@@ -347,9 +344,10 @@ export default function WaitlistPage() {
                     <div className="footer-meta-item">2026 © All rights reserved</div>
 
                     <div className="footer-link-group">
-                        <a href="#" className="footer-meta-item">Twitter</a>
-                        <a href="#" className="footer-meta-item">Discord</a>
-                        <a href="#" className="footer-meta-item">Instagram</a>
+                        <a href="https://x.com/bynomofun" target="_blank" rel="noopener noreferrer" className="footer-meta-item">X / Twitter</a>
+                        <a href="https://discord.com/invite/5MAHQpWZ7b" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Discord</a>
+                        <a href="https://t.me/bynomo" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Telegram</a>
+                        <a href="https://linktr.ee/bynomo.fun" target="_blank" rel="noopener noreferrer" className="footer-meta-item">Linktree</a>
                     </div>
 
                     <div className="footer-link-group">
