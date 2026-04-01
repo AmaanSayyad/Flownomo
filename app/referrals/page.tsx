@@ -49,7 +49,7 @@ export default function ReferralPage() {
     };
 
     const shareOnX = () => {
-        const text = encodeURIComponent(`Trade with millisecond precision on @FlownomoProtocol! 🚀\n\nJoin using my referral link and earn rewards:`);
+        const text = encodeURIComponent(`Trade with millisecond precision on @Bynomofun! 🚀\n\nJoin using my referral link and earn rewards:`);
         window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(referralLink)}`, '_blank');
     };
 
