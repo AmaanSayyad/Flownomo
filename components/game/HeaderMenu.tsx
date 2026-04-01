@@ -30,6 +30,15 @@ export function HeaderMenu() {
     }, []);
 
     const menuItems = [
+        ...(isTradePage ? [{
+            label: 'Quick Tour',
+            sublabel: 'Interactive onboarding',
+            onClick: () => {
+                setIsTourOpen(true);
+                setIsOpen(false);
+            },
+            accent: 'bg-purple-500'
+        }] : []),
         {
             label: 'Profile',
             sublabel: username || 'My Neural Identity',
@@ -47,16 +56,7 @@ export function HeaderMenu() {
             sublabel: 'Global Hall of Fame',
             href: '/leaderboard',
             accent: 'bg-yellow-500'
-        },
-        ...(isTradePage ? [{
-            label: 'Quick Tour',
-            sublabel: 'Interactive onboarding',
-            onClick: () => {
-                setIsTourOpen(true);
-                setIsOpen(false);
-            },
-            accent: 'bg-purple-500'
-        }] : [])
+        }
     ];
 
     return (
