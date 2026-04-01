@@ -9,6 +9,13 @@ Powered by **Flow Testnet** + **Pyth Hermes** price attestations + **Supabase** 
 
 **Treasury (Flow Testnet):** `0xfc2730bbe0bd4941`
 
+| Resource | Link |
+|----------|------|
+| Flow Testnet Treasury (Flowscan) | [https://testnet.flowscan.io/account/0xfc2730bbe0bd4941?tab=ft-transfers](https://testnet.flowscan.io/account/0xfc2730bbe0bd4941?tab=ft-transfers) |
+| Pitch Deck | [https://docs.google.com/presentation/d/1jP2M__MzN7y5EcMDH2uzCCGs9sFib1a3sc7DDDQqQuw/edit?usp=sharing](https://docs.google.com/presentation/d/1jP2M__MzN7y5EcMDH2uzCCGs9sFib1a3sc7DDDQqQuw/edit?usp=sharing) |
+| Live App | [https://flownomo.vercel.app/trade](https://flownomo.vercel.app/trade) |
+| Demo Video | [https://youtu.be/BMNB2nN_NtI](https://youtu.be/BMNB2nN_NtI) |
+
 ---
 
 ## Why Flownomo?
@@ -21,6 +28,51 @@ Binary options trading in Web3 is rare. Real-time oracles and sub-second resolut
 - **5s, 10s, 15s, 30s, 1m** rounds with oracle-bound settlement.
 
 Flownomo brings binary options to Flow Testnet with transparent, on-chain settlement.
+
+---
+
+## Story / Inspiration
+
+In 2021, I saw heavy promotion of a Web2 binary options app. I first used paper trading mode and quickly made 10x, then switched to real mode, deposited three months of income, and lost everything. Later, I found large Reddit threads from users reporting similar patterns: trial-mode wins, real-mode losses, opaque systems, and alleged manipulation.
+
+That experience became the reason Flownomo exists: build a transparent binary options product where pricing and settlement are verifiable instead of black-box.
+
+At that time, Web3 tooling was not ready for true high-frequency binary options. Sub-second oracle infrastructure was missing. I waited for the stack to mature, then executed in 2026 with Flow + Pyth.
+
+## Problem
+
+Binary options in Web3 are still underdeveloped, while many Web2 platforms are opaque and trust-heavy.
+
+- Real-time oracle delivery below 1 second has historically been limited.
+- During major volatility events, oracle and infra stress can break user trust.
+- Massive demand already exists: ~590M+ crypto users and very high daily blockchain transaction activity.
+- Result: a clear gap between trader demand and trustworthy high-frequency products.
+
+## Solution - Flownomo
+
+Flownomo is designed as a high-frequency, oracle-settled binary options platform:
+
+- Millisecond-aware pricing via Pyth Hermes.
+- Multi-asset exposure (crypto, stocks, metals, forex, and more).
+- House-balance execution so users can place many bets without signing each transaction.
+- Fast expiries: `5s`, `10s`, `15s`, `30s`, `1m`.
+- Single treasury model with transparent settlement rails.
+
+Vision path:
+
+- Add `1x-10x` leverage primitives.
+- Expand open-market trading design for broader crypto execution styles.
+- Push settlement performance and UX to near-instant user feedback.
+
+## Primary Customer
+
+- **DeFi-native traders onchain**: users already active in spot/perps/options/DEX flows looking for very short timeframes.
+- **Web2 binary/prediction users moving to Web3**: users from platforms like Binomo, IQ Option, Polymarket, Kalshi seeking transparent settlement.
+- **Traders, gamblers, creators, and communities**: KOL-led groups and Telegram/Discord communities wanting gamified high-speed trading experiences.
+
+## Long-Term Objective
+
+Build Flownomo into the leading on-chain venue for short-duration binary options, with the ambition to become for binary options what Polymarket became for prediction markets.
 
 ---
 
@@ -221,7 +273,7 @@ Edit `.env` with:
 
 | Variable | Description |
 |----------|-------------|
-| `NEXT_PUBLIC_FLOW_NETWORK` | `testnet` or `mainnet` |
+| `NEXT_PUBLIC_FLOW_NETWORK` | `testnet` |
 | `NEXT_PUBLIC_TESTNET_ACCESS_NODE` | Flow testnet access node URL |
 | `NEXT_PUBLIC_TESTNET_DISCOVERY_WALLET` | Flow testnet discovery wallet URL |
 | `NEXT_PUBLIC_FLOW_TREASURY_ADDRESS` | Treasury address for deposits/withdrawals |
