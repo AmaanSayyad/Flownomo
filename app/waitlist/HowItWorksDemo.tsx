@@ -5,7 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // --- Assets / Icons ---
 // Reused from previous code
-const CHAINS = [
+type DemoChain = {
+    name: string;
+    id: string;
+    color: string;
+    logo: string;
+    bg?: string;
+};
+
+const CHAINS: DemoChain[] = [
     { name: 'Flow Testnet', id: 'FLOW', color: '#00EF8B', logo: '/flow-flow-logo.png' },
 ];
 
