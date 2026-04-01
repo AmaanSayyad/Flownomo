@@ -12,7 +12,7 @@ import { AssetType } from "@/lib/utils/priceFeed";
 import { playWinSound, playLoseSound } from "@/lib/utils/sounds";
 
 // Game Modes
-export type GameMode = 'binomo' | 'box';
+export type GameMode = 'binomo' | 'box' | 'draw';
 
 // Active bet (Supports both modes)
 export interface ActiveBet {
@@ -32,6 +32,8 @@ export interface ActiveBet {
   cellId?: string;
   priceTop?: number;
   priceBottom?: number;
+  // Draw mode specific
+  startTime?: number;
 }
 
 export interface GameState {
@@ -78,7 +80,7 @@ export interface GameState {
   setSelectedAsset: (asset: AssetType) => void;
   setTimeframeSeconds: (seconds: number) => void;
   placeBet: (amount: string, targetId: string) => Promise<void>;
-  placeBetFromHouseBalance: (amount: string, targetId: string, userAddress: string, cellId?: string, metadata?: { priceTop?: number; priceBottom?: number; endTime?: number }) => Promise<{ betId: string; remainingBalance: number; bet: ActiveBet } | void>;
+  placeBetFromHouseBalance: (amount: string, targetId: string, userAddress: string, cellId?: string, metadata?: { priceTop?: number; priceBottom?: number; startTime?: number; endTime?: number }) => Promise<{ betId: string; remainingBalance: number; bet: ActiveBet } | void>;
   updatePrice: (price: number, asset?: AssetType) => void;
   updateAllPrices: (prices: Record<string, number>) => void;
   startGlobalPriceFeed: (updateAllPrices: (prices: Record<string, number>) => void) => (() => void);
@@ -126,7 +128,7 @@ const DEFAULT_TARGET_CELLS: TargetCell[] = [
  */
 export const createGameSlice: StateCreator<any> = (set, get) => ({
   // Initial state
-  gameMode: 'binomo', // Default mode
+  gameMode: 'box', // Default mode
   selectedAsset: 'FLOW',
   currentPrice: 0,
   priceHistory: [],
@@ -142,7 +144,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
   isSettling: false,
   lastResult: null,
   error: null,
-  timeframeSeconds: 30, // Default for binomo
+  timeframeSeconds: 5, // Default expiry
   activeTab: 'bet',
   activeIndicators: {},
   isIndicatorsOpen: false,
@@ -220,7 +222,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
      * If there are active box bets, we MUST NOT allow changing the duration,
      * as it would rebuild the grid and make existing bets visually/logically lost.
      */
-    if (gameMode === 'box' && activeBets.some((bet: ActiveBet) => bet.mode === 'box')) {
+    if ((gameMode === 'box' || gameMode === 'draw') && activeBets.some((bet: ActiveBet) => bet.mode === 'box' || bet.mode === 'draw')) {
       return;
     }
 
@@ -275,7 +277,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
    * @param cellId - Optional: The specific cell ID this bet is placed on
    * @param metadata - Optional: Extra resolution info (price bounds, end time)
    */
-  placeBetFromHouseBalance: async (amount: string, targetId: string, userAddress: string, cellId?: string, metadata?: { priceTop?: number; priceBottom?: number; endTime?: number }) => {
+  placeBetFromHouseBalance: async (amount: string, targetId: string, userAddress: string, cellId?: string, metadata?: { priceTop?: number; priceBottom?: number; startTime?: number; endTime?: number }) => {
     const { targetCells, currentPrice, addActiveBet, gameMode, timeframeSeconds, selectedAsset } = get();
 
     try {
@@ -348,6 +350,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
             cellId: cellId || targetId,
             priceTop: metadata?.priceTop,
             priceBottom: metadata?.priceBottom,
+            startTime: metadata?.startTime,
             endTime: metadata?.endTime
           })
         };
@@ -422,6 +425,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
           cellId: cellId || targetId,
           priceTop: metadata?.priceTop,
           priceBottom: metadata?.priceBottom,
+          startTime: metadata?.startTime,
           endTime: metadata?.endTime
         })
       };
@@ -571,6 +575,12 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
         const payout = won ? bet.amount * bet.multiplier : 0;
         resolveBet(bet.id, won, payout);
       }
+      // DRAW MODE Logic
+      else if (bet.mode === 'draw' && bet.endTime && bet.priceTop !== undefined && bet.priceBottom !== undefined && now >= bet.endTime) {
+        const won = finalPrice <= bet.priceTop && finalPrice >= bet.priceBottom;
+        const payout = won ? bet.amount * bet.multiplier : 0;
+        resolveBet(bet.id, won, payout);
+      }
     });
   },
 
@@ -667,8 +677,13 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
           endPrice: currentPrice,
           actualChange: currentPrice - (resolvedBet.strikePrice || 0),
           target: {
-            id: resolvedBet.cellId || 'classic',
-            label: resolvedBet.mode === 'binomo' ? `${resolvedBet.direction} ${resolvedBet.multiplier}x` : `Box ${resolvedBet.multiplier}x`,
+            id: resolvedBet.mode === 'binomo' ? 'classic' : resolvedBet.mode === 'draw' ? 'draw' : 'box',
+            label:
+              resolvedBet.mode === 'binomo'
+                ? `${resolvedBet.direction} ${resolvedBet.multiplier}x`
+                : resolvedBet.mode === 'draw'
+                  ? `Draw ${resolvedBet.multiplier}x`
+                  : `Box ${resolvedBet.multiplier}x`,
             multiplier: resolvedBet.multiplier,
             priceChange: 0,
             direction: resolvedBet.direction

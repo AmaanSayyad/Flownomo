@@ -45,7 +45,7 @@ export const GameBoard: React.FC = () => {
   } = useStore();
 
   const [betAmount, setBetAmount] = useState<string>('0.1');
-  const [selectedDuration, setSelectedDuration] = useState<number>(30);
+  const [selectedDuration, setSelectedDuration] = useState<number>(5);
   const [isPanelOpen, setIsPanelOpen] = useState(true);
 
   const [blitzCountdown, setBlitzCountdown] = useState<string>('');
@@ -147,8 +147,18 @@ export const GameBoard: React.FC = () => {
 
   // Sync selectedDuration with store's timeframeSeconds
   useEffect(() => {
+    if (gameMode === 'binomo') {
+      setTimeframeSeconds(selectedDuration);
+      return;
+    }
+
+    if (gameMode === 'draw') {
+      setTimeframeSeconds(5);
+      return;
+    }
+
     setTimeframeSeconds(selectedDuration);
-  }, [selectedDuration, setTimeframeSeconds]);
+  }, [selectedDuration, setTimeframeSeconds, gameMode]);
 
   // Multiplier mapping based on duration
   const getMultiplier = (duration: number) => {
@@ -277,15 +287,6 @@ export const GameBoard: React.FC = () => {
           {/* Game Mode Selector */}
           <div className="flex gap-1 p-1 bg-black/60 border-b border-white/5" data-tour="game-mode-toggle">
             <button
-              onClick={() => setGameMode('binomo')}
-              className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all duration-200 ${gameMode === 'binomo'
-                ? 'bg-purple-600/20 text-purple-400 border border-purple-500/40'
-                : 'text-gray-500 hover:text-gray-300'
-                }`}
-            >
-              Classic
-            </button>
-            <button
               onClick={() => setGameMode('box')}
               className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all duration-200 ${gameMode === 'box'
                 ? 'bg-purple-600/20 text-purple-400 border border-purple-500/40'
@@ -293,6 +294,24 @@ export const GameBoard: React.FC = () => {
                 }`}
             >
               Box Mode
+            </button>
+            <button
+              onClick={() => setGameMode('draw')}
+              className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all duration-200 ${gameMode === 'draw'
+                ? 'bg-purple-600/20 text-purple-400 border border-purple-500/40'
+                : 'text-gray-500 hover:text-gray-300'
+                }`}
+            >
+              Draw
+            </button>
+            <button
+              onClick={() => setGameMode('binomo')}
+              className={`flex-1 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tighter transition-all duration-200 ${gameMode === 'binomo'
+                ? 'bg-purple-600/20 text-purple-400 border border-purple-500/40'
+                : 'text-gray-500 hover:text-gray-300'
+                }`}
+            >
+              Classic
             </button>
           </div>
 
@@ -361,17 +380,24 @@ export const GameBoard: React.FC = () => {
                     <label className="text-gray-500 text-[10px] font-medium uppercase tracking-widest mb-2 block">
                       Expiration Time
                     </label>
+                    {gameMode === 'draw' && (
+                      <p className="text-purple-300 text-[10px] font-bold uppercase tracking-widest mb-2">
+                        Draw duration fixed at 5s
+                      </p>
+                    )}
                     <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
                       {[5, 10, 15, 30, 60].map(duration => (
                         <button
                           key={duration}
-                          onClick={() => setSelectedDuration(duration)}
+                          onClick={() => gameMode !== 'draw' && setSelectedDuration(duration)}
+                          disabled={gameMode === 'draw'}
                           className={`
                             py-3 sm:py-2.5 rounded-xl font-black text-[10px] sm:text-xs transition-all duration-300 border
                             ${selectedDuration === duration
                               ? 'bg-purple-600/20 border-purple-500/50 text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)] scale-105 z-10'
                               : 'bg-black/40 border-white/5 text-gray-500 hover:text-gray-300 hover:border-white/10'
                             }
+                            disabled:opacity-50 disabled:cursor-not-allowed
                           `}
                         >
                           <div className="flex flex-col items-center gap-0.5">
@@ -425,12 +451,21 @@ export const GameBoard: React.FC = () => {
                         <span className="text-rose-400 text-xs font-black tracking-tighter uppercase">Lower</span>
                       </button>
                     </div>
-                  ) : (
+                  ) : gameMode === 'box' ? (
                     <div className="pt-2">
                       <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-4 text-center">
                         <p className="text-purple-300 text-xs font-bold uppercase tracking-widest mb-1">Box Mode Active</p>
                         <p className="text-gray-400 text-[10px] leading-relaxed">
                           Click any cell on the grid chart to place your bet. Each cell has a different multiplier based on its distance from the current price.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="pt-2">
+                      <div className="bg-purple-500/10 border border-purple-500/30 rounded-2xl p-4 text-center">
+                        <p className="text-purple-300 text-xs font-bold uppercase tracking-widest mb-1">Draw Mode Active</p>
+                        <p className="text-gray-400 text-[10px] leading-relaxed">
+                          Draw a box on chart, then confirm to place your bet.
                         </p>
                       </div>
                     </div>
