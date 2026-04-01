@@ -109,7 +109,7 @@ Build Flownomo into the leading on-chain venue for short-duration binary options
 | **On-chain options / DeFi** | Dopex, Lyra, Premia | Standard options (calls/puts), complex UX; no simple "price up/down in 30s" binary product. |
 | **Flow Testnet binary options** | — | No established on-chain binary options dApp; Flownomo fills this gap. |
 
-**Flownomo's differentiation:** On-chain binary options on Flow Testnet with sub-second oracle resolution (Pyth Hermes), house balance for instant bets, and dual modes (Classic + Box) in one treasury.
+**Flownomo's differentiation:** On-chain binary options on Flow Testnet with sub-second oracle resolution (Pyth Hermes), house balance for instant bets, and three modes (Classic + Box + Draw) in one treasury.
 
 ---
 
@@ -154,7 +154,7 @@ flowchart LR
 
 1. **Connect** — Connect via Flow wallets (Lilico, Blocto, FCL). All operations use **FLOW** on Flow Testnet.
 2. **Deposit** — Send FLOW from your wallet to the Flownomo treasury. Your house balance is credited instantly.
-3. **Place bet** — Choose **Classic** (up/down + expiry) or **Box** (tap tiles with multipliers). No on-chain tx per bet.
+3. **Place bet** — Choose **Classic** (up/down + expiry), **Box** (tap tiles with multipliers), or **Draw** (draw your target zone). No on-chain tx per bet.
 4. **Resolution** — Pyth Hermes provides the price at expiry; win/loss is applied to your house balance.
 5. **Withdraw** — Request withdrawal; FLOW is sent from the treasury to your wallet on Flow Testnet.
 
@@ -214,7 +214,7 @@ sequenceDiagram
 
     loop Betting
         P->>App: Live price stream
-        U->>App: Place bet Classic or Box
+        U->>App: Place bet Classic, Box, or Draw
         App->>API: Record bet in Supabase
         Note over App,API: No on-chain tx per bet, house balance only
         P->>App: Price at expiry
@@ -233,6 +233,7 @@ sequenceDiagram
 flowchart TD
     Start[Select Mode] --> Classic[Classic Mode]
     Start --> Box[Box Mode]
+    Start --> Draw[Draw Mode]
 
     Classic --> C1[Choose UP or DOWN]
     C1 --> C2[Pick expiry 5s to 1m]
@@ -242,6 +243,10 @@ flowchart TD
     Box --> B1[Tap a tile on the chart]
     B1 --> B2[Each tile is multiplier up to 10x]
     B2 --> B3[Price touches tile before expiry equals WIN]
+
+    Draw --> D1[Draw a custom price zone]
+    D1 --> D2[Set fixed 5s duration]
+    D2 --> D3[If expiry price lands in zone equals WIN]
 ```
 
 ---
