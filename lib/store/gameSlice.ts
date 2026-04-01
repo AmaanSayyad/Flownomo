@@ -58,7 +58,7 @@ export interface GameState {
     timestamp: number;
     asset: AssetType; // Track which asset this result belongs to
     cellId?: string; // For box mode visual feedback
-    currency?: string; // The currency usage (e.g. XLM, NEAR, BNB)
+    currency?: string; // Currency used for settlement (FLOW/DEMO)
   } | null;
   error: string | null;
   timeframeSeconds: number;
@@ -259,7 +259,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
 
   /**
    * Place a bet on a target cell
-   * Note: After Sui migration, this method is deprecated.
+   * Note: After Flow migration, this method is deprecated.
    * Use placeBetFromHouseBalance instead for off-chain betting.
    * @param amount - Bet amount in USDC tokens (e.g., "1.0")
    * @param targetId - ID of the target cell (1-8) OR dynamic grid target (e.g., "UP-2.50")
@@ -271,7 +271,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
   /**
    * Place a bet using house balance (no wallet signature required)
    * Instant-resolution system: bet is placed on a specific cell, resolves when chart hits it
-   * @param amount - Bet amount in BNB tokens
+   * @param amount - Bet amount in FLOW
    * @param targetId - Dynamic grid target (e.g., "UP-2.50") containing direction and multiplier
    * @param userAddress - User's wallet address
    * @param cellId - Optional: The specific cell ID this bet is placed on
@@ -417,7 +417,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
         direction: direction,
         timestamp: Date.now(),
         status: 'active',
-        network: network, // Save the network used (e.g. XLM, NEAR, BNB)
+        network: network, // Save the network used (FLOW only)
         ...(gameMode === 'binomo' ? {
           strikePrice: currentPrice,
           endTime: Date.now() + (durationSeconds * 1000)
@@ -457,7 +457,7 @@ export const createGameSlice: StateCreator<any> = (set, get) => ({
 
   /**
    * Settle an active round
-   * Note: After Sui migration, settlement is handled automatically by the instant-resolution system.
+   * Note: After Flow migration, settlement is handled automatically by the instant-resolution system.
    * This method is kept for backward compatibility but does nothing.
    * @param betId - The unique bet ID to settle
    */

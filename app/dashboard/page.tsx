@@ -85,12 +85,6 @@ export default function AdminDashboard() {
         if (!hash || hash === 'INTERNAL') return null;
         switch (currency.toUpperCase()) {
             case 'FLOW': return `https://testnet.flowscan.org/transaction/${hash}`;
-            case 'BNB': return `https://bscscan.com/tx/${hash}`;
-            case 'NEAR': return `https://nearblocks.io/txns/${hash}`;
-            case 'SOL': return `https://solscan.io/tx/${hash}`;
-            case 'SUI': return `https://suiscan.xyz/tx/${hash}`;
-            case 'XTZ': return `https://tzkt.io/${hash}`;
-            case 'XLM': return `https://stellar.expert/explorer/public/tx/${hash}`;
             default: return null;
         }
     };

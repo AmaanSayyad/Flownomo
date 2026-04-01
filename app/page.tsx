@@ -20,7 +20,7 @@ const steps = [
     {
         id: "02",
         title: "Multi-Asset Feed",
-        desc: "Trade more than just crypto. Predict millisecond movements on Bitcoin, Solana, Gold, and Tech giants like NVDA and TSLA via Pyth Fixed Oracles."
+        desc: "Trade more than just crypto. Predict millisecond movements on Bitcoin, Flow, Gold, and Tech giants like NVDA and TSLA via Pyth Fixed Oracles."
     },
     {
         id: "03",

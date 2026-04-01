@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
         (data || []).forEach((row: any) => {
             const addr = row.wallet_address;
-            const net = row.network || 'BNB';
+            const net = row.network || 'FLOW';
             if (!walletStats[addr]) {
                 walletStats[addr] = {
                     wallet_address: addr,

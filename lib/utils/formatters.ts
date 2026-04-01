@@ -23,7 +23,7 @@ export const formatUSDC = (amount: string | number): string => {
 };
 
 /**
- * Shorten a Sui address for display
+ * Shorten a wallet address for display
  */
 export const shortenAddress = (address: string): string => {
   if (!address) return '';

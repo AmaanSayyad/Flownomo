@@ -6,11 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // --- Assets / Icons ---
 // Reused from previous code
 const CHAINS = [
-    { name: 'Solana', id: 'SOL', color: '#9945FF', logo: '/logos/solana-sol-logo.png' },
-    { name: 'Sui', id: 'SUI', color: '#4DA2FF', logo: '/logos/sui-logo.png' },
-    { name: 'Near', id: 'NEAR', color: '#000000', logo: '/logos/near-logo.svg', bg: 'white' },
-    { name: 'BNB', id: 'BNB', color: '#F3BA2F', logo: '/logos/bnb-bnb-logo.png' },
-    { name: 'Stellar', id: 'XLM', color: '#7D00FF', logo: '/logos/stellar-xlm-logo.png' },
+    { name: 'Flow Testnet', id: 'FLOW', color: '#00EF8B', logo: '/flow-flow-logo.png' },
 ];
 
 export default function HowItWorksDemo() {
@@ -18,8 +14,8 @@ export default function HowItWorksDemo() {
 
     const features = [
         {
-            title: "Multi-Chain Access",
-            desc: "Connect instantly with Solana, Sui, Near, BNB, or Stellar. No bridging required.",
+            title: "Flow Wallet Access",
+            desc: "Connect instantly with your Flow Testnet wallet and start trading without bridge friction.",
             component: <ChainSelectVisual />
         },
         {
@@ -118,7 +114,7 @@ export default function HowItWorksDemo() {
                 <div className="absolute top-0 left-0 right-0 h-16 flex items-center justify-between px-6 border-b border-white/5 bg-black/20 backdrop-blur-sm z-30 pointer-events-none">
                     <div className="text-xl font-black tracking-tighter text-white" style={{ fontFamily: 'var(--font-orbitron)' }}>FLOWNOMO</div>
                     <div className="flex gap-3">
-                        <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-lg text-[10px] font-bold text-amber-500 uppercase">Mainnet</div>
+                        <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-[10px] font-bold text-emerald-400 uppercase">Flow Testnet</div>
                         <div className={`px-3 py-1 border border-white/10 rounded-lg text-xs font-mono text-white flex items-center gap-2 transition-colors ${activeFeature === 0 ? 'bg-purple-500/20 border-purple-500/50' : 'bg-[#15151A]'}`}>
                             <div className={`w-2 h-2 rounded-full ${activeFeature === 0 ? 'bg-purple-400 animate-ping' : 'bg-green-500'}`} />
                             {activeFeature === 0 ? 'Connecting...' : 'Connected'}
@@ -265,7 +261,7 @@ function SettlementVisual() {
                     <div className="flex-1">
                         <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-1">Total Payout</div>
                         <div className="text-2xl font-mono text-white font-bold flex items-center gap-2">
-                            +1.95 <span className="text-purple-400 text-sm">SOL</span>
+                            +1.95 <span className="text-purple-400 text-sm">FLOW</span>
                         </div>
                     </div>
                     <div className="px-3 py-1 bg-green-500/10 border border-green-500/20 rounded text-[10px] text-green-400 font-bold uppercase tracking-wider">

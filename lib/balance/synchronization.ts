@@ -2,9 +2,9 @@
  * Balance Synchronization Module
  * 
  * This module provides functions to check and maintain synchronization between
- * the Supabase user_balances table and the Sui blockchain treasury.
+ * the Supabase user_balances table and the Flow house-balance ledger.
  * 
- * Note: After Sui migration, this module needs to be updated to work with Sui blockchain.
+ * Note: This module is currently a stub for Flow-only reconciliation flows.
  * Currently stubbed out to allow builds to succeed.
  * 
  * Requirements: 9.1, 9.2, 9.3
@@ -31,12 +31,12 @@ export interface SyncCheckResult {
 }
 
 /**
- * Check synchronization between Supabase and Sui treasury
+ * Check synchronization between Supabase and Flow house balance records
  * 
- * TODO: Update this function to work with Sui blockchain after migration.
+ * TODO: Hook this function into Flow-based reconciliation source of truth.
  * Currently returns a stub response.
  * 
- * @param contractAddress - The Sui address of the treasury contract
+ * @param contractAddress - Flow treasury address
  * @returns SyncCheckResult containing synchronization status and details
  * 
  * Requirements: 9.1, 9.2, 9.3
@@ -67,9 +67,9 @@ export async function checkBalanceSynchronization(
     // Calculate total from Supabase
     const supabaseTotal = balances?.reduce((sum, row) => sum + parseFloat(row.balance.toString()), 0) || 0;
 
-    // TODO: Query Sui treasury balance
+    // TODO: Query Flow treasury / settlement balance
     // For now, return a stub response
-    console.warn('checkBalanceSynchronization: Sui integration not yet implemented');
+    console.warn('checkBalanceSynchronization: Flow reconciliation integration not yet implemented');
     
     return {
       synchronized: true,
@@ -77,7 +77,7 @@ export async function checkBalanceSynchronization(
       escrowVaultBalance: supabaseTotal, // Stub: assume synchronized
       discrepancy: 0,
       timestamp,
-      error: 'Sui integration pending'
+      error: 'Flow reconciliation integration pending'
     };
   } catch (error) {
     console.error('Unexpected error in checkBalanceSynchronization:', error);
@@ -115,10 +115,10 @@ export interface ReconcileResult {
 /**
  * Reconcile a single user's balance with the blockchain
  * 
- * TODO: Update this function to work with Sui blockchain after migration.
+ * TODO: Update this function to reconcile against Flow-backed settlement records.
  * Currently returns a stub response.
  * 
- * @param userAddress - The user's Sui wallet address
+ * @param userAddress - The user's Flow wallet address
  * @param dryRun - If true, only check discrepancy without updating
  * @returns ReconcileResult containing reconciliation details
  */
@@ -150,9 +150,9 @@ export async function reconcileUserBalance(
 
     const oldBalance = parseFloat(userData.balance.toString());
 
-    // TODO: Query user's balance from Sui blockchain
+    // TODO: Query user's effective balance from Flow-backed settlement source
     // For now, return a stub response
-    console.warn('reconcileUserBalance: Sui integration not yet implemented');
+    console.warn('reconcileUserBalance: Flow reconciliation integration not yet implemented');
     
     return {
       success: true,
@@ -161,7 +161,7 @@ export async function reconcileUserBalance(
       newBalance: oldBalance, // Stub: assume no discrepancy
       discrepancy: 0,
       timestamp,
-      error: dryRun ? 'Dry run - Sui integration pending' : 'Sui integration pending'
+      error: dryRun ? 'Dry run - Flow reconciliation integration pending' : 'Flow reconciliation integration pending'
     };
   } catch (error) {
     console.error('Unexpected error in reconcileUserBalance:', error);
@@ -180,7 +180,7 @@ export async function reconcileUserBalance(
 /**
  * Reconcile all users' balances with the blockchain
  * 
- * TODO: Update this function to work with Sui blockchain after migration.
+ * TODO: Update this function to reconcile all users with Flow-backed settlement records.
  * Currently returns a stub response.
  * 
  * @param dryRun - If true, only check discrepancies without updating

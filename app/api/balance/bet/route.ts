@@ -6,13 +6,12 @@
  * 
  * Called when user places a bet from house balance.
  * Validates sufficient balance and deducts bet amount atomically.
- * Note: After Sui migration, game logic is off-chain. No blockchain call needed.
+ * Note: In Flow-only mode, game logic is off-chain. No blockchain call needed.
  * Inserts audit log entry with operation_type='bet_placed'.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase/client';
-import { ethers } from 'ethers';
 
 interface BetRequest {
   userAddress: string;
@@ -117,7 +116,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Balance deducted successfully
-    // Note: After Sui migration, game logic is off-chain. No blockchain call needed.
+    // Note: In Flow-only mode, game logic is off-chain. No blockchain call needed.
     // The bet is tracked in the database and resolved by the game engine.
     try {
       // Generate a bet ID

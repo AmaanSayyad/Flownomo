@@ -2,7 +2,7 @@
  * History state slice for Zustand store
  * Manages bet history and persistence
  * 
- * Note: After Sui migration, bet history is managed off-chain.
+ * Note: In Flow-only mode, bet history is managed off-chain.
  * Blockchain events are only for deposit/withdrawal tracking.
  */
 
